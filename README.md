@@ -123,6 +123,8 @@ Rule 3: !dedupe
 
 ## Installation
 
+Install from [VS Code Marketplace](https://marketplace.visualstudio.com/manage) or build locally:
+
 ```bash
 npm install
 npm run compile
