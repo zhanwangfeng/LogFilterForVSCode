@@ -1,0 +1,19 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "LogFilter",
+  "scopeName": "source.lf",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#commands" }
+  ],
+  "repository": {
+    "comments": {
+      "name": "comment.line.lf",
+      "match": "^\\s*#.*$"
+    },
+    "commands": {
+      "name": "keyword.control.lf",
+      "match": "^\\s*!\\w+.*$"
+    }
+  }
+}

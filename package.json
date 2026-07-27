@@ -1,0 +1,75 @@
+{
+  "name": "logfilter",
+  "displayName": "LogFilter",
+  "description": "Log file preview extension - view .log files in a preview panel",
+  "version": "0.0.1",
+  "publisher": "logfilter",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.95.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onCommand:logFilter.openPreview",
+    "onCommand:logFilter.createLogFilter",
+    "onLanguage:lf"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "logFilter.openPreview",
+        "title": "LogFilter: Open Preview"
+      },
+      {
+        "command": "logFilter.createLogFilter",
+        "title": "LogFilter: Create LogFilter File"
+      },
+      {
+        "command": "logFilter.filterUpToLine",
+        "title": "LogFilter: Filter Up to This Line"
+      }
+    ],
+    "languages": [
+      {
+        "id": "lf",
+        "extensions": [".lf"],
+        "aliases": ["LogFilter"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "lf",
+        "scopeName": "source.lf",
+        "path": "./syntaxes/lf.tmLanguage.json"
+      }
+    ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "logFilter.openPreview",
+          "group": "navigation",
+          "when": "resourceExtname == .log && logFilter:lfFileExists"
+        },
+        {
+          "command": "logFilter.createLogFilter",
+          "group": "navigation",
+          "when": "resourceExtname == .log && !logFilter:lfFileExists"
+        }
+      ]
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@types/vscode": "^1.95.0",
+    "typescript": "^5.7.0"
+  }
+}
