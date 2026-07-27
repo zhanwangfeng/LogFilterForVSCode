@@ -1,3 +1,7 @@
+## v0.0.2
+
+- Fix: README.md now displayed correctly on Marketplace
+
 ## v0.0.1
 
 Initial release of LogFilter — a VS Code extension for pipeline-based log filtering.
