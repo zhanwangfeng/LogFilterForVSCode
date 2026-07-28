@@ -80,7 +80,6 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
               ka = parseInt(String(ra), 10) || 0;
               kb = parseInt(String(rb), 10) || 0;
             }
-            console.log(`[sort desc=${desc} int=${asInt}] a="${a}" → ka="${ka}"  |  b="${b}" → kb="${kb}"`);
             const cmp = asInt ? (ka as number) - (kb as number) : String(ka).localeCompare(String(kb));
             return desc ? -cmp : cmp;
           });
