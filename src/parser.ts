@@ -6,11 +6,12 @@ export interface RegexRule {
 export interface CommandRule {
   type: 'command';
   command: string;
+  params: string[];
 }
 
 export type Rule = RegexRule | CommandRule;
 
-const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive', 'count', 'count-consecutive']);
+const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive', 'count', 'count-consecutive', 'sort']);
 
 export function parseLfFile(content: string): Rule[] {
   const rules: Rule[] = [];
@@ -19,11 +20,13 @@ export function parseLfFile(content: string): Rule[] {
     if (line === '' || line.startsWith('#')) continue;
 
     if (line.startsWith('!')) {
-      const cmd = line.slice(1).trim().toLowerCase();
+      const parts = line.slice(1).trim().split(/\s+/);
+      const cmd = parts[0].toLowerCase();
+      const params = parts.slice(1);
       if (!SUPPORTED_COMMANDS.has(cmd)) {
         throw new Error(`Unknown command: ${line}`);
       }
-      rules.push({ type: 'command', command: cmd });
+      rules.push({ type: 'command', command: cmd, params });
     } else {
       try {
         new RegExp(line);

@@ -1,3 +1,10 @@
+## v0.0.5
+
+- Feat: add `!sort` command — sort lines ascending / descending
+- Feat: add `-desc` flag for descending sort
+- Feat: add `-regex <pattern>` flag to sort by captured content
+- Feat: command parameter system — `!` commands now support `-flag` style parameters
+
 ## v0.0.4
 
 - Feat: add `Ctrl+Enter` shortcut — execute the nearest valid filter rule above the cursor

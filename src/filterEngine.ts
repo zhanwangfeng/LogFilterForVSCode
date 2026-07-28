@@ -63,6 +63,21 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
           currentLines = result;
           break;
         }
+        case 'sort': {
+          const desc = rule.params.includes('-desc');
+          const regexIdx = rule.params.indexOf('-regex');
+          const regex = regexIdx !== -1 && regexIdx + 1 < rule.params.length
+            ? new RegExp(rule.params[regexIdx + 1])
+            : null;
+
+          currentLines = [...currentLines].sort((a, b) => {
+            const ka = regex ? regex.exec(a)?.[1] ?? a : a;
+            const kb = regex ? regex.exec(b)?.[1] ?? b : b;
+            const cmp = ka.localeCompare(kb);
+            return desc ? -cmp : cmp;
+          });
+          break;
+        }
       }
     } else {
       const regex = new RegExp(rule.pattern, 'g');

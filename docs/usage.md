@@ -74,6 +74,7 @@ ERROR
 |------|------|
 | `!dedupe` | 去除全局重复行，保留首次出现 |
 | `!dedupe-consecutive` | 去除连续重复行（类似 `uniq`） |
+| `!sort` | 升序排序（`!sort -desc` 降序，`!sort -regex <正则>` 按提取内容排序） |
 
 示例：
 

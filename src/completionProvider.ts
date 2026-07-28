@@ -21,6 +21,21 @@ const COMMAND_COMPLETIONS: { label: string; detail: string; documentation: strin
     detail: '统计连续重复行',
     documentation: '统计连续重复行的出现次数，在行尾以 (N) 形式标注（类似 uniq -c）。',
   },
+  {
+    label: '!sort',
+    detail: '升序排序',
+    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序',
+  },
+  {
+    label: '!sort -desc',
+    detail: '降序排序',
+    documentation: '对当前行集按字母降序排序。',
+  },
+  {
+    label: '!sort -regex',
+    detail: '按正则提取内容排序',
+    documentation: '按正则第一个捕获组 `()` 提取的内容作为排序键。\n示例：`!sort -regex (\\d+)`',
+  },
 ];
 
 export class LfCompletionProvider implements vscode.CompletionItemProvider {
