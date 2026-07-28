@@ -65,15 +65,23 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
         }
         case 'sort': {
           const desc = rule.params.includes('-desc');
+          const asInt = rule.params.includes('-int');
           const regexIdx = rule.params.indexOf('-regex');
           const regex = regexIdx !== -1 && regexIdx + 1 < rule.params.length
             ? new RegExp(rule.params[regexIdx + 1])
             : null;
 
           currentLines = [...currentLines].sort((a, b) => {
-            const ka = regex ? regex.exec(a)?.[1] ?? a : a;
-            const kb = regex ? regex.exec(b)?.[1] ?? b : b;
-            const cmp = ka.localeCompare(kb);
+            const ra = regex ? regex.exec(a)?.[1] ?? a : a;
+            const rb = regex ? regex.exec(b)?.[1] ?? b : b;
+            let ka: string | number = ra;
+            let kb: string | number = rb;
+            if (asInt) {
+              ka = parseInt(String(ra), 10) || 0;
+              kb = parseInt(String(rb), 10) || 0;
+            }
+            console.log(`[sort desc=${desc} int=${asInt}] a="${a}" → ka="${ka}"  |  b="${b}" → kb="${kb}"`);
+            const cmp = asInt ? (ka as number) - (kb as number) : String(ka).localeCompare(String(kb));
             return desc ? -cmp : cmp;
           });
           break;

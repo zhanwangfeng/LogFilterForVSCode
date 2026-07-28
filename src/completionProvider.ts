@@ -30,7 +30,7 @@ const COMMAND_COMPLETIONS: CompletionEntry[] = [
   {
     label: '!sort',
     detail: '升序排序',
-    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序',
+    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序\n- `-int` 按整数排序（可与 `-regex` 组合）',
   },
 ];
 
@@ -46,6 +46,12 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
     label: '-regex <正则>',
     detail: '按正则提取内容排序',
     documentation: '按正则第一个捕获组 `()` 提取的内容作为排序键。\n示例：`!sort -regex (\\d+)`',
+  },
+  {
+    command: 'sort',
+    label: '-int',
+    detail: '按整数排序',
+    documentation: '将排序键转为整数再比较，适用于数字排序。\n可与 `-regex` 组合使用。',
   },
 ];
 

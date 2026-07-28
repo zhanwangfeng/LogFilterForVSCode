@@ -95,6 +95,7 @@ case 'sort': {
 - 使用 `rule.params.includes('-desc')` 检测降序
 - `-regex <正则>` 从 params 中取出正则字符串，创建 RegExp 对象
 - 对每行执行 `regex.exec()`，取第一个捕获组 `[1]` 作为排序键；若行不匹配则回退到整行
+- `-int` 将 ka/kb 通过 `parseInt(String(...), 10)` 转为整数后做数值比较（`ka - kb`），而非字符串比较
 - 默认升序，`-desc` 时反转比较结果
 
 ### 3. completionProvider.ts — 自动补全
@@ -119,6 +120,12 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
     label: '-regex <正则>',
     detail: '按正则提取内容排序',
     documentation: '按正则第一个捕获组 `()` 提取的内容作为排序键。\n示例：`!sort -regex (\\d+)`',
+  },
+  {
+    command: 'sort',
+    label: '-int',
+    detail: '按整数排序',
+    documentation: '将排序键转为整数再比较，适用于数字排序。\n可与 `-regex` 组合使用。',
   },
 ];
 ```
