@@ -79,7 +79,9 @@ Lines starting with `!` operate on the entire current line set:
 |---------|-------------|
 | `!dedupe` | Remove duplicate lines globally, keep first occurrence |
 | `!dedupe-consecutive` | Remove consecutive duplicate lines (like `uniq`) |
-| `!sort` | Sort lines ascending (`!sort -desc` descending, `!sort -regex <pattern>` sort by captured content, `!sort -int` numeric sort) |
+| `!count` | Merge duplicate lines, append repetition count `(N)` to each line |
+| `!count-consecutive` | Count consecutive duplicate lines (like `uniq -c`) |
+| `!sort` | Sort lines ascending (`-desc` descending, `-regex <pattern>` sort by captured content, `-int` numeric sort) |
 
 ```lf
 ERROR
