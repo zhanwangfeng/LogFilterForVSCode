@@ -1,3 +1,9 @@
+## v0.0.3
+
+- Feat: add `!count` command — merge and count duplicate lines
+- Feat: add `!count-consecutive` command — count consecutive duplicate lines (like `uniq -c`)
+- Feat: add auto-completion for `!` commands in `.lf` files
+
 ## v0.0.2
 
 - Fix: README.md now displayed correctly on Marketplace
