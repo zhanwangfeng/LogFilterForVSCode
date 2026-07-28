@@ -39,6 +39,30 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
           currentLines = result;
           break;
         }
+        case 'count': {
+          const counts = new Map<string, number>();
+          for (const line of currentLines) {
+            counts.set(line, (counts.get(line) ?? 0) + 1);
+          }
+          currentLines = [];
+          for (const [line, count] of counts) {
+            currentLines.push(`${line} (${count})`);
+          }
+          break;
+        }
+        case 'count-consecutive': {
+          const result: string[] = [];
+          let count = 0;
+          for (let i = 0; i < currentLines.length; i++) {
+            count++;
+            if (i + 1 >= currentLines.length || currentLines[i] !== currentLines[i + 1]) {
+              result.push(`${currentLines[i]} (${count})`);
+              count = 0;
+            }
+          }
+          currentLines = result;
+          break;
+        }
       }
     } else {
       const regex = new RegExp(rule.pattern, 'g');

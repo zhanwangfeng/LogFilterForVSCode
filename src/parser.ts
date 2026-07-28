@@ -10,7 +10,7 @@ export interface CommandRule {
 
 export type Rule = RegexRule | CommandRule;
 
-const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive']);
+const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive', 'count', 'count-consecutive']);
 
 export function parseLfFile(content: string): Rule[] {
   const rules: Rule[] = [];

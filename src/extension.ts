@@ -3,6 +3,7 @@ import * as path from 'path';
 import { parseLfFile, Rule } from './parser';
 import { applyFilter } from './filterEngine';
 import { LfCodeLensProvider } from './codelensProvider';
+import { LfCompletionProvider } from './completionProvider';
 
 function showPreview(logFileName: string, resultLines: string[], appliedCount: number, totalCount: number) {
   const panel = vscode.window.createWebviewPanel(
@@ -215,6 +216,10 @@ export function activate(context: vscode.ExtensionContext) {
 
   context.subscriptions.push(
     vscode.languages.registerCodeLensProvider('lf', new LfCodeLensProvider())
+  );
+
+  context.subscriptions.push(
+    vscode.languages.registerCompletionItemProvider('lf', new LfCompletionProvider(), '!')
   );
 }
 
