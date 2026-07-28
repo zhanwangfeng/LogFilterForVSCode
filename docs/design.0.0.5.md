@@ -99,29 +99,50 @@ case 'sort': {
 
 ### 3. completionProvider.ts — 自动补全
 
+- `COMMAND_COMPLETIONS` 中保留 `!sort`，移除单独的 `!sort -desc` 和 `!sort -regex` 条目
+- 新增 `PARAM_COMPLETIONS` 数组，按 `command` 分组管理各命令的参数补全
+- 注册 `-` 为触发字符（与 `!` 并列）
+- 补全逻辑分两条路径：
+  - 输入 `!` 时弹出命令补全（现有逻辑）
+  - 输入 `!命令名 -` 时弹出该命令的参数补全
+
 ```typescript
-{
-  label: '!sort',
-  detail: '升序排序',
-  documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序',
-},
-{
-  label: '!sort -desc',
-  detail: '降序排序',
-  documentation: '对当前行集按字母降序排序。',
-},
-{
-  label: '!sort -regex',
-  detail: '按正则提取内容排序',
-  documentation: '按正则第一个捕获组 `()` 提取的内容作为排序键。\n示例：`!sort -regex (\\d+)`',
-},
+const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
+  {
+    command: 'sort',
+    label: '-desc',
+    detail: '降序排序',
+    documentation: '对当前行集按字母降序排序。',
+  },
+  {
+    command: 'sort',
+    label: '-regex <正则>',
+    detail: '按正则提取内容排序',
+    documentation: '按正则第一个捕获组 `()` 提取的内容作为排序键。\n示例：`!sort -regex (\\d+)`',
+  },
+];
 ```
 
-用户在 `!sort` 后继续输入 `-d` 或 `-r` 时可匹配。
+```typescript
+// 参数补全触发分支
+const paramMatch = linePrefix.match(/^!(\S+)\s+-?$/);
+if (paramMatch) {
+  const cmdName = paramMatch[1].toLowerCase();
+  const typed = linePrefix.slice(linePrefix.lastIndexOf('-')).toLowerCase();
+  return PARAM_COMPLETIONS
+    .filter(p => p.command === cmdName && p.label.toLowerCase().startsWith(typed))
+    .map(p => { /* ... */ });
+}
+```
+
+注册触发字符：
+```typescript
+vscode.languages.registerCompletionItemProvider('lf', new LfCompletionProvider(), '!', '-')
+```
 
 ### 4. 文档更新
 
-- `README.md` — 命令表新增 `!sort` / `!sort -desc` / `!sort -regex`
+- `README.md` — 命令表新增 `!sort` / `-desc` / `-regex`
 - `docs/design.md` — 命令表新增 `!sort`
 - `docs/usage.md` — 命令表新增 `!sort`
 - `CHANGELOG.md` — 新增 v0.0.5 条目

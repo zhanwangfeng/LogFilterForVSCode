@@ -256,7 +256,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider('lf', new LfCompletionProvider(), '!')
+    vscode.languages.registerCompletionItemProvider('lf', new LfCompletionProvider(), '!', '-')
   );
 }
 

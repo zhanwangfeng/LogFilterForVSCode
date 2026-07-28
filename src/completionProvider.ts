@@ -1,6 +1,12 @@
 import * as vscode from 'vscode';
 
-const COMMAND_COMPLETIONS: { label: string; detail: string; documentation: string }[] = [
+interface CompletionEntry {
+  label: string;
+  detail: string;
+  documentation: string;
+}
+
+const COMMAND_COMPLETIONS: CompletionEntry[] = [
   {
     label: '!dedupe',
     detail: '去除全局重复行',
@@ -26,13 +32,18 @@ const COMMAND_COMPLETIONS: { label: string; detail: string; documentation: strin
     detail: '升序排序',
     documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序',
   },
+];
+
+const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
   {
-    label: '!sort -desc',
+    command: 'sort',
+    label: '-desc',
     detail: '降序排序',
     documentation: '对当前行集按字母降序排序。',
   },
   {
-    label: '!sort -regex',
+    command: 'sort',
+    label: '-regex <正则>',
     detail: '按正则提取内容排序',
     documentation: '按正则第一个捕获组 `()` 提取的内容作为排序键。\n示例：`!sort -regex (\\d+)`',
   },
@@ -47,18 +58,34 @@ export class LfCompletionProvider implements vscode.CompletionItemProvider {
   ): vscode.CompletionItem[] {
     const linePrefix = document.lineAt(position).text.slice(0, position.character);
 
-    if (!linePrefix.startsWith('!')) return [];
+    if (linePrefix.startsWith('!') && !/\s/.test(linePrefix.slice(1))) {
+      const typed = linePrefix.slice(1).toLowerCase();
+      return COMMAND_COMPLETIONS
+        .filter(cmd => cmd.label.slice(1).startsWith(typed))
+        .map(cmd => {
+          const item = new vscode.CompletionItem(cmd.label, vscode.CompletionItemKind.Keyword);
+          item.detail = cmd.detail;
+          item.documentation = new vscode.MarkdownString(cmd.documentation);
+          item.range = new vscode.Range(position.line, linePrefix.indexOf('!'), position.line, position.character);
+          return item;
+        });
+    }
 
-    const typed = linePrefix.slice(1).toLowerCase();
+    const paramMatch = linePrefix.match(/^!(\S+)\s+-?$/);
+    if (paramMatch) {
+      const cmdName = paramMatch[1].toLowerCase();
+      const typed = linePrefix.slice(linePrefix.lastIndexOf('-')).toLowerCase();
+      return PARAM_COMPLETIONS
+        .filter(p => p.command === cmdName && p.label.toLowerCase().startsWith(typed))
+        .map(p => {
+          const item = new vscode.CompletionItem(p.label, vscode.CompletionItemKind.Keyword);
+          item.detail = p.detail;
+          item.documentation = new vscode.MarkdownString(p.documentation);
+          item.range = new vscode.Range(position.line, linePrefix.lastIndexOf('-'), position.line, position.character);
+          return item;
+        });
+    }
 
-    return COMMAND_COMPLETIONS
-      .filter(cmd => cmd.label.slice(1).startsWith(typed))
-      .map(cmd => {
-        const item = new vscode.CompletionItem(cmd.label, vscode.CompletionItemKind.Keyword);
-        item.detail = cmd.detail;
-        item.documentation = new vscode.MarkdownString(cmd.documentation);
-        item.range = new vscode.Range(position.line, linePrefix.indexOf('!'), position.line, position.character);
-        return item;
-      });
+    return [];
   }
 }
