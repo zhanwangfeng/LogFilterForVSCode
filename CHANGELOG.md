@@ -1,3 +1,7 @@
+## v0.0.6
+
+- Feat: add extension icon to package — icons/icon-128.png displayed on Marketplace
+
 ## v0.0.5
 
 - Feat: add `!sort` command — sort lines ascending / descending
