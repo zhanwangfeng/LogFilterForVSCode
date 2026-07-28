@@ -81,7 +81,8 @@
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
-    "watch": "tsc -watch -p ./"
+    "watch": "tsc -watch -p ./",
+    "package": "node -e \"const v=require('./package.json').version; require('child_process').execSync('vsce package --out ./release/logfilter-'+v+'.vsix',{stdio:'inherit',shell:true})\""
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
