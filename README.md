@@ -1,7 +1,7 @@
 # LogFilter
 
-[![VS Marketplace](https://img.shields.io/visual-studio-marketplace/v/logfilter.LogFilter?label=VS%20Marketplace&color=green)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
-[![installs](https://img.shields.io/visual-studio-marketplace/d/logfilter.LogFilter?label=installs&color=green)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
+[![Visual Studio Marketplace Version](https://vsmarketplacebadges.dev/version-short/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
+[![Visual Studio Marketplace Installs](https://vsmarketplacebadges.dev/installs/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
 
 A VS Code extension for pipeline-based log filtering. Write `.lf` rule files to filter, extract, and deduplicate log file content, then preview results directly in VS Code.
 
