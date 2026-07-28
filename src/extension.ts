@@ -215,6 +215,43 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
+    vscode.commands.registerCommand('logFilter.filterCurrentLine', async () => {
+      const editor = vscode.window.activeTextEditor;
+      if (!editor || editor.document.languageId !== 'lf') {
+        vscode.window.showErrorMessage('No active .lf file found');
+        return;
+      }
+
+      const document = editor.document;
+      const currentLine = editor.selection.active.line;
+
+      let targetLine = currentLine;
+      while (targetLine >= 0) {
+        const text = document.lineAt(targetLine).text.trim();
+        if (text !== '' && !text.startsWith('#')) break;
+        targetLine--;
+      }
+
+      if (targetLine < 0) {
+        vscode.window.showWarningMessage('No valid filter line found');
+        return;
+      }
+
+      let patternIndex = 0;
+      for (let line = 0; line <= targetLine; line++) {
+        const text = document.lineAt(line).text.trim();
+        if (text !== '' && !text.startsWith('#')) {
+          if (line === targetLine) break;
+          patternIndex++;
+        }
+      }
+
+      const lfUri = document.uri;
+      await vscode.commands.executeCommand('logFilter.filterUpToLine', { patternIndex, lfUri });
+    })
+  );
+
+  context.subscriptions.push(
     vscode.languages.registerCodeLensProvider('lf', new LfCodeLensProvider())
   );
 

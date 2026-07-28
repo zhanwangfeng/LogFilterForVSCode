@@ -18,6 +18,7 @@
   "activationEvents": [
     "onCommand:logFilter.openPreview",
     "onCommand:logFilter.createLogFilter",
+    "onCommand:logFilter.filterCurrentLine",
     "onLanguage:lf"
   ],
   "main": "./out/extension.js",
@@ -34,6 +35,10 @@
       {
         "command": "logFilter.filterUpToLine",
         "title": "LogFilter: Filter Up to This Line"
+      },
+      {
+        "command": "logFilter.filterCurrentLine",
+        "title": "LogFilter: Filter Current Line"
       }
     ],
     "languages": [
@@ -49,6 +54,13 @@
         "language": "lf",
         "scopeName": "source.lf",
         "path": "./syntaxes/lf.tmLanguage.json"
+      }
+    ],
+    "keybindings": [
+      {
+        "command": "logFilter.filterCurrentLine",
+        "key": "ctrl+enter",
+        "when": "editorLangId == lf"
       }
     ],
     "menus": {

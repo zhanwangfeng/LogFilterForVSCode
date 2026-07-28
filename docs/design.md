@@ -9,8 +9,8 @@
    - 若该文件不存在 → 显示 **CreateLogFilter** 按钮
 4. 点击 **CreateLogFilter** → 在当前文件同目录下创建 `当前文件名.lf` 文件，自动打开 `.lf` 文件
 5. 点击 **OpenPreview** → 读取 `.lf` 中的全部规则，按流水线方式层层筛选/提取，在新标签页中预览结果
-6. 若当前文件为 `.lf` 文件，每行规则上方显示 **▶ Filter** CodeLens 按钮
-7. 点击某行 **▶ Filter** → 从 `.lf` 第 1 条规则执行到该行止，对同目录下同名 `.log` 文件进行筛选，预览结果
+6. 若当前文件为 `.lf` 文件，每行规则上方显示 **▶ Filter (Ctrl+Enter)** CodeLens 按钮
+7. 点击某行 **▶ Filter (Ctrl+Enter)** → 从 `.lf` 第 1 条规则执行到该行止，对同目录下同名 `.log` 文件进行筛选，预览结果；也可按 `Ctrl+Enter` 快捷键直接触发
 8. 按钮状态始终与磁盘上 `.lf` 文件的实际存在状态保持一致：
    - CreateLogFilter 时若 `.lf` 已存在 → 不创建，直接刷新按钮为 OpenPreview
    - OpenPreview 时若 `.lf` 已不存在 → 取消预览，刷新按钮为 CreateLogFilter
@@ -222,7 +222,7 @@ Step 4（正则：提取最后一段）:
 ### Step 6：实现 CodeLens 提供者（codelensProvider.ts）
 - 注册 `vscode.languages.registerCodeLensProvider`，语言范围为 `lf`
 - 对 `.lf` 文件的每一非空、非注释行（无论正则还是命令），在其上方创建一个 CodeLens：
-  - `title`: `▶ Filter`
+  - `title`: `▶ Filter (Ctrl+Enter)`
   - `command`: `logFilter.filterUpToLine`
   - `arguments`: `[{lineIndex, lfUri, logUri}]` — 当前行号、.lf 文件 URI、对应 .log 文件 URI
 - 当 `.lf` 文件内容变更时自动刷新 CodeLens（`onDidChangeEvent`）
@@ -287,6 +287,15 @@ Step 4（正则：提取最后一段）:
 - 每项补全附带说明文字（detail）和详细文档（documentation）
 - 持续输入字母可进一步筛选匹配的命令
 
+### Step 15：实现 filterCurrentLine 命令（extension.ts）
+- 注册命令 `logFilter.filterCurrentLine`，绑定快捷键 `Ctrl+Enter`
+- 获取当前光标所在行号
+- 从当前行向上查找最近的**非空、非注释**行（跳过空行和 `#` 注释行）
+- 计算该行对应的 `patternIndex`（从文件开头到目标行之间的有效规则数）
+- 调用 `filterUpToLine` 执行过滤
+- 在 `package.json` 中注册快捷键 `ctrl+enter`，限定 `when: editorLangId == lf`
+- CodeLens 标题更新为 `▶ Filter (Ctrl+Enter)` 以示提示
+
 ## 目录结构
 
 ```
@@ -314,19 +323,19 @@ LogFilter/
 ┌──────────────────────────────────────────────┐
 │  app.lf                                       │
 │                                               │
-│  ▶ Filter                                     │
+│  ▶ Filter (Ctrl+Enter)                        │
 │  # 筛选出包含 ERROR 的行                      │
 │  ERROR                                        │
 │                                               │
-│  ▶ Filter                                     │
+│  ▶ Filter (Ctrl+Enter)                        │
 │  # 从结果中提取 IP 地址                       │
 │  \[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]    │
 │                                               │
-│  ▶ Filter                                     │
+│  ▶ Filter (Ctrl+Enter)                        │
 │  # 统计出现次数                                │
 │  !count                                       │
 │                                               │
-│  ▶ Filter                                     │
+│  ▶ Filter (Ctrl+Enter)                        │
 │  # 从 IP 中提取最后一段                       │
 │  (\d+)$                                       │
 └──────────────────────────────────────────────┘
@@ -360,8 +369,8 @@ LogFilter/
 
 - 仅 `.log` 文件在编辑器标题栏显示 OpenPreview / CreateLogFilter 按钮
 - 按钮根据 `当前文件名.lf` 是否存在动态切换，状态始终与磁盘实际状态对齐
-- 编辑 `.lf` 文件时，每行规则上方显示 ▶ Filter CodeLens
-- 点击某行 ▶ Filter，从原文件开始执行第 1 条到该行的全部规则，输出最终结果到预览窗口
+- 编辑 `.lf` 文件时，每行规则上方显示 ▶ Filter (Ctrl+Enter) CodeLens
+- 点击某行 ▶ Filter (Ctrl+Enter) 或按 `Ctrl+Enter`，从原文件开始执行第 1 条到该行的全部规则，输出最终结果到预览窗口
 - OpenPreview 始终执行全部规则
 - 筛选流水线：每条规则的输出作为下一条规则的输入
 - 无捕获组 → 纯过滤（保留整行）；有捕获组 → 提取（仅保留捕获内容）

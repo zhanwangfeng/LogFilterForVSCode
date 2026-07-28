@@ -1,3 +1,9 @@
+## v0.0.4
+
+- Feat: add `Ctrl+Enter` shortcut — execute the nearest valid filter rule above the cursor
+- Feat: CodeLens now shows `▶ Filter (Ctrl+Enter)` to indicate the keyboard shortcut
+- Feat: add `logFilter.filterCurrentLine` command
+
 ## v0.0.3
 
 - Feat: add `!count` command — merge and count duplicate lines

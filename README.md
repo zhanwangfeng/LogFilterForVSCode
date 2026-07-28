@@ -8,7 +8,8 @@ A VS Code extension for pipeline-based log filtering. Write `.lf` rule files to 
 - **Regex filtering**: Keep lines matching a regex, or extract capture groups
 - **Deduplication**: Remove duplicate lines globally or consecutively
 - **Preview panel**: View filtered results in a dedicated webview panel
-- **Step-by-step execution**: Click `▶ Filter` on any rule to run from the start up to that rule
+- **Step-by-step execution**: Click `▶ Filter (Ctrl+Enter)` on any rule to run from the start up to that rule
+- **Quick execution**: Press `Ctrl+Enter` on any line to run the nearest valid rule above the cursor
 - **Syntax highlighting**: `.lf` files have full syntax highlighting and comment toggling (`Ctrl+/`)
 
 ## Quick Start
@@ -36,7 +37,7 @@ ERROR
 
 ### Step 3: Preview results
 
-Go back to the `.log` file and click **OpenPreview** in the editor title bar. For step-by-step execution, click `▶ Filter` on any line in the `.lf` file.
+Go back to the `.log` file and click **OpenPreview** in the editor title bar. For step-by-step execution, click `▶ Filter (Ctrl+Enter)` on any line in the `.lf` file, or press `Ctrl+Enter` with the cursor on that line.
 
 ## Rule Syntax
 
@@ -117,7 +118,8 @@ Rule 3: !dedupe
 
 ### .lf file operations
 
-- **`▶ Filter`**: CodeLens button above each rule, runs from rule 1 to that line
+- **`▶ Filter (Ctrl+Enter)`**: CodeLens button above each rule, runs from rule 1 to that line
+- **`Ctrl+Enter`**: Run the nearest valid rule above the cursor (skips comments and blank lines)
 - **Syntax highlighting**: Comments (green), commands (purple), regex (default)
 - **`Ctrl+/`**: Toggle line comment
 

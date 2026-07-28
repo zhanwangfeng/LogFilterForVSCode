@@ -13,7 +13,7 @@ export class LfCodeLensProvider implements vscode.CodeLensProvider {
         new vscode.CodeLens(
           new vscode.Range(line, 0, line, 0),
           {
-            title: '▶ Filter',
+            title: '▶ Filter (Ctrl+Enter)',
             command: 'logFilter.filterUpToLine',
             arguments: [{ patternIndex, lfUri: document.uri }],
           }
