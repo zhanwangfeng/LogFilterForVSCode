@@ -132,7 +132,7 @@ Rule 3: !dedupe
 
 ## Installation
 
-Install from [VS Code Marketplace](https://marketplace.visualstudio.com/manage) or build locally.
+Install from [VS Code Marketplace](https://marketplace.visualstudio.com/) or build locally.
 
 > **Note**: The extension includes an icon (`icons/icon-128.png`) displayed on the Marketplace and in VS Code's extension list.
 
