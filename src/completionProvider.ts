@@ -32,6 +32,30 @@ const COMMAND_COMPLETIONS: CompletionEntry[] = [
     detail: '升序排序',
     documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序\n- `-int` 按整数排序（可与 `-regex` 组合）',
   },
+  {
+    label: '!pivot',
+    detail: '数据透视表（行×列交叉统计）',
+    documentation: '对当前行集做交叉统计，输出二维表格。\n' +
+      '用法：\n' +
+      '  !pivot -p <正则> -r <字段> [-r <字段>]… -c <字段> [-c <字段>]… [-v <字段>]… [-f <字段> [正则]]…\n\n' +
+      '流程：\n' +
+      '  1. -p 正则用捕获组定义字段（每个()对应一个字段）\n' +
+      '  2. -n <N>:<别名> 为字段设置别名（可选）\n' +
+      '  3. -r / -c / -v / -f 引用字段（索引或别名），重复使用添加多个\n\n' +
+      '参数：\n' +
+      '  -p <正则>    带多个捕获组的正则，定义字段结构\n' +
+      '  -n <N>:<别名> 为第 N 个捕获组设置别名\n' +
+      '  -r <字段>    行标签（可重复，首次=外层，后续=内层）\n' +
+      '  -c <字段>    列标题（可重复）\n' +
+      '  -v <字段>    聚合值（可重复）\n' +
+      '  -f <字段> [正则]  筛选器，可选正则匹配\n' +
+      '  -func <F>    聚合函数 count|sum|avg|min|max（可重复）\n' +
+      '  -fill <文本> 空单元格填充\n' +
+      '  -sort rows|cols|both|none  排序\n\n' +
+      '示例：\n' +
+      '  !pivot -p (\\d+\\.\\d+\\.\\d+\\.\\d+).*?(\\d{2}): -n 1:IP -n 2:Hour -r IP -c Hour -func count\n' +
+      '  !pivot -p ... -r 1 -r 2 -c 3 -v 4 -func avg -f 1 ERROR',
+  },
 ];
 
 const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
@@ -52,6 +76,60 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
     label: '-int',
     detail: '按整数排序',
     documentation: '将排序键转为整数再比较，适用于数字排序。\n可与 `-regex` 组合使用。',
+  },
+  {
+    command: 'pivot',
+    label: '-p <正则>',
+    detail: '字段定义（必填）',
+    documentation: '带多个捕获组的正则，每个 () 定义一个字段。\n各字段按捕获组出现顺序编号（1-based）。',
+  },
+  {
+    command: 'pivot',
+    label: '-n <N>:<别名>',
+    detail: '字段别名',
+    documentation: '为第 N 个捕获组设置别名。后续可通过别名引用。\n例：-n 1:IP -n 2:Hour',
+  },
+  {
+    command: 'pivot',
+    label: '-r <字段>',
+    detail: '行字段（可重复）',
+    documentation: '指定行标签字段。可重复使用实现多层嵌套。\n值可以是数字索引或 -n 定义的别名。',
+  },
+  {
+    command: 'pivot',
+    label: '-c <字段>',
+    detail: '列字段（可重复）',
+    documentation: '指定列标题字段。可重复使用实现多层嵌套。\n值可以是数字索引或 -n 定义的别名。',
+  },
+  {
+    command: 'pivot',
+    label: '-v <字段>',
+    detail: '值字段（可重复）',
+    documentation: '指定聚合值字段。可重复使用添加多个值。\n值可以是数字索引或 -n 定义的别名。',
+  },
+  {
+    command: 'pivot',
+    label: '-f <字段> [正则]',
+    detail: '筛选器（可重复）',
+    documentation: '指定筛选字段。可选后跟正则，字段值必须匹配才保留。\n例：-f 1 ERROR  只保留字段1匹配ERROR的行',
+  },
+  {
+    command: 'pivot',
+    label: '-func count|sum|avg|min|max',
+    detail: '聚合函数（可重复）',
+    documentation: 'count:计数 sum:求和 avg:平均 min:最小值 max:最大值。\n可重复使用，与 -v 按顺序一一对应。默认 count。',
+  },
+  {
+    command: 'pivot',
+    label: '-fill <文本>',
+    detail: '空单元格填充',
+    documentation: '设置空白单元格的填充文本。count 默认 0，其他默认 -。',
+  },
+  {
+    command: 'pivot',
+    label: '-sort rows|cols|both|none',
+    detail: '排序方式',
+    documentation: 'rows:行标签排序 cols:列标签排序 both:行列均排序 none:按首次出现顺序。',
   },
 ];
 

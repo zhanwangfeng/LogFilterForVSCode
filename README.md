@@ -82,6 +82,7 @@ Lines starting with `!` operate on the entire current line set:
 | `!count` | Merge duplicate lines, append repetition count `(N)` to each line |
 | `!count-consecutive` | Count consecutive duplicate lines (like `uniq -c`) |
 | `!sort` | Sort lines ascending (`-desc` descending, `-regex <pattern>` sort by captured content, `-int` numeric sort) |
+| `!pivot` | Pivot table — cross-tabulation with row/column fields, aggregation (`-p` pattern, `-r` rows, `-c` cols, `-v` values, `-f` filter, `-func` aggregator) |
 
 ```lf
 ERROR
