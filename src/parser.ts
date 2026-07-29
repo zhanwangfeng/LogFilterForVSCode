@@ -11,7 +11,7 @@ export interface CommandRule {
 
 export type Rule = RegexRule | CommandRule;
 
-const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive', 'count', 'count-consecutive', 'sort']);
+const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive', 'count', 'count-consecutive', 'sort', 'pivot']);
 
 export function parseLfFile(content: string): Rule[] {
   const rules: Rule[] = [];

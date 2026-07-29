@@ -1,3 +1,14 @@
+## v0.0.7
+
+- Feat: add `!pivot` command — Excel-style pivot table for log data
+- Feat: `-p <regex>` define fields via capture groups
+- Feat: `-n <N>:<alias>` field aliases for readable references
+- Feat: `-r`, `-c`, `-v` repeatable for multi-level rows, columns, and values
+- Feat: `-f <field> [regex]` filter rows (non-null check or regex match)
+- Feat: `-func count|sum|avg|min|max` aggregation functions
+- Feat: `-sort rows|cols|both|none` sort row/column labels
+- Feat: `-fill <text>` custom empty cell filler
+
 ## v0.0.6
 
 - Feat: add extension icon to package — icons/icon-128.png displayed on Marketplace
