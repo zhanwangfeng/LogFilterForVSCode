@@ -86,6 +86,17 @@ Lines starting with `!` operate on the entire current line set:
 | `!sort` | Sort lines ascending (`-desc` descending, `-regex <pattern>` sort by captured content, `-int` numeric sort) |
 | `!pivot` | Pivot table — cross-tabulation with row/column fields, aggregation (`-p` pattern, `-r` rows, `-c` cols, `-v` values, `-f` filter, `-func` aggregator) |
 
+Command parameters can be written on continuation lines (lines starting with `-` after indentation) for readability:
+
+```lf
+!pivot -p (\d+\.\d+\.\d+\.\d+).*?(\d{2}):
+  -n 1:IP
+  -n 2:Hour
+  -r IP
+  -c Hour
+  -func count
+```
+
 ```lf
 ERROR
 \[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]

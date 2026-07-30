@@ -76,9 +76,26 @@
 
 命令在流水线中占一个步骤编号，CodeLens 同样显示在其上方。命令不区分大小写（`!DEDUPE`、`!Dedupe` 均合法）。
 
+#### 多行参数（v0.0.8）
+
+命令的参数可换行书写，以 `-` 开头的连续行会自动合并到最近的 `!` 命令：
+
+```lf
+!pivot -p (\d+\.\d+\.\d+\.\d+).*?(\d{2}):
+  -n 1:IP
+  -n 2:Hour
+  -r IP
+  -c Hour
+  -func count
+```
+
+等价于单行 `!pivot -p (...) -n 1:IP -n 2:Hour -r IP -c Hour -func count`。解析时先预处理合并续行，再执行原有解析逻辑（`preprocessLfContent` → `parseLfFile`）。续行不显示 CodeLens，Ctrl+Enter 跳过续行定位到所属 `!` 命令。
+
 ### 自动补全
 
 在 `.lf` 文件中输入 `!` 后，VS Code 自动弹出补全下拉列表，列出所有支持的命令及其说明。持续输入字母可进一步筛选命令列表。
+
+在 `!` 命令后输入 `-` 触发参数补全（仅显示该命令支持的参数）。在续行（以 `-` 开头的行）中输入 `-` 时，自动向上查找最近的 `!` 命令并显示其参数补全列表。
 
 ### 完整示例
 
@@ -223,10 +240,11 @@ Step 4（正则：提取最后一段）:
 
 ### Step 6：实现 CodeLens 提供者（codelensProvider.ts）
 - 注册 `vscode.languages.registerCodeLensProvider`，语言范围为 `lf`
-- 对 `.lf` 文件的每一非空、非注释行（无论正则还是命令），在其上方创建一个 CodeLens：
+- 对 `.lf` 文件的每一非空、非注释、非 `-` 续行（无论正则还是命令），在其上方创建一个 CodeLens：
   - `title`: `▶ Filter (Ctrl+Enter)`
   - `command`: `logFilter.filterUpToLine`
   - `arguments`: `[{lineIndex, lfUri, logUri}]` — 当前行号、.lf 文件 URI、对应 .log 文件 URI
+- 续行（以 `-` 开头）不显示 CodeLens，不计入 `patternIndex`
 - 当 `.lf` 文件内容变更时自动刷新 CodeLens（`onDidChangeEvent`）
 
 ### Step 7：实现 filterUpToLine 命令（extension.ts）
@@ -292,11 +310,17 @@ Step 4（正则：提取最后一段）:
 ### Step 15：实现 filterCurrentLine 命令（extension.ts）
 - 注册命令 `logFilter.filterCurrentLine`，绑定快捷键 `Ctrl+Enter`
 - 获取当前光标所在行号
-- 从当前行向上查找最近的**非空、非注释**行（跳过空行和 `#` 注释行）
-- 计算该行对应的 `patternIndex`（从文件开头到目标行之间的有效规则数）
+- 从当前行向上查找最近的**非空、非注释、非 `-` 续行**（跳过空行、`#` 注释行、`-` 续行）
+- 计算该行对应的 `patternIndex`（从文件开头到目标行之间的有效规则数，跳过续行）
 - 调用 `filterUpToLine` 执行过滤
 - 在 `package.json` 中注册快捷键 `ctrl+enter`，限定 `when: editorLangId == lf`
 - CodeLens 标题更新为 `▶ Filter (Ctrl+Enter)` 以示提示
+
+### Step 16：实现多行命令参数（v0.0.8）
+- **预处理合并**：在 `parser.ts` 中新增 `preprocessLfContent()`，将 `-` 开头的续行合并到上方最近的 `!` 命令行，返回单行化内容后再解析
+- **续行补全**：在 `completionProvider.ts` 中新增路径 3，输入 `-` 开头行时通过 `findNearestCommand()` 向上查找最近的 `!` 命令，提供对应的参数补全列表
+- **恢复文件导航**：加载 `.lf` 文件时所有行首空格被删除，行首空格仅用于视觉排版，业务逻辑不关心
+- **CodeLens/Ctrl+Enter**：续行不显示 `▶ Filter` 按钮，不计入 `patternIndex`，Ctrl+Enter 跳过续行定位到所属 `!` 命令
 
 ## 目录结构
 
@@ -371,8 +395,9 @@ LogFilter/
 
 - 仅 `.log` 文件在编辑器标题栏显示 OpenPreview / CreateLogFilter 按钮
 - 按钮根据 `当前文件名.lf` 是否存在动态切换，状态始终与磁盘实际状态对齐
-- 编辑 `.lf` 文件时，每行规则上方显示 ▶ Filter (Ctrl+Enter) CodeLens
+- 编辑 `.lf` 文件时，每行规则上方显示 ▶ Filter (Ctrl+Enter) CodeLens（续行除外）
 - 点击某行 ▶ Filter (Ctrl+Enter) 或按 `Ctrl+Enter`，从原文件开始执行第 1 条到该行的全部规则，输出最终结果到预览窗口
+- 续行（以 `-` 开头的行）不显示 CodeLens，不计入 `patternIndex`，Ctrl+Enter 跳过续行
 - OpenPreview 始终执行全部规则
 - 筛选流水线：每条规则的输出作为下一条规则的输入
 - 无捕获组 → 纯过滤（保留整行）；有捕获组 → 提取（仅保留捕获内容）

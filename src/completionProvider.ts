@@ -170,6 +170,42 @@ export class LfCompletionProvider implements vscode.CompletionItemProvider {
         });
     }
 
+    const trimmedPrefix = linePrefix.trim();
+    if (trimmedPrefix.startsWith('-') && !trimmedPrefix.startsWith('!')) {
+      const cmdName = findNearestCommand(document, position);
+      if (cmdName) {
+        const typed = trimmedPrefix.toLowerCase();
+        return PARAM_COMPLETIONS
+          .filter(p => p.command === cmdName && p.label.toLowerCase().startsWith(typed))
+          .map(p => {
+            const item = new vscode.CompletionItem(p.label, vscode.CompletionItemKind.Keyword);
+            item.detail = p.detail;
+            item.documentation = new vscode.MarkdownString(p.documentation);
+            const dashPos = linePrefix.lastIndexOf('-');
+            item.range = new vscode.Range(
+              position.line,
+              dashPos >= 0 ? dashPos : position.character,
+              position.line,
+              position.character
+            );
+            return item;
+          });
+      }
+    }
+
     return [];
   }
+}
+
+function findNearestCommand(document: vscode.TextDocument, position: vscode.Position): string | null {
+  for (let line = position.line - 1; line >= 0; line--) {
+    const text = document.lineAt(line).text.trim();
+    if (text.startsWith('!')) {
+      const match = text.match(/^!(\w+)/);
+      return match ? match[1].toLowerCase() : null;
+    }
+    if (text === '' || text.startsWith('#') || text.startsWith('-')) continue;
+    return null;
+  }
+  return null;
 }

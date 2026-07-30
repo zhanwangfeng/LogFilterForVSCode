@@ -7,7 +7,7 @@ export class LfCodeLensProvider implements vscode.CodeLensProvider {
 
     for (let line = 0; line < document.lineCount; line++) {
       const text = document.lineAt(line).text.trim();
-      if (text === '' || text.startsWith('#')) continue;
+      if (text === '' || text.startsWith('#') || text.startsWith('-')) continue;
 
       lenses.push(
         new vscode.CodeLens(
