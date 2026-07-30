@@ -30,7 +30,7 @@ const COMMAND_COMPLETIONS: CompletionEntry[] = [
   {
     label: '!sort',
     detail: '升序排序',
-    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序\n- `-int` 按整数排序（可与 `-regex` 组合）',
+    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序\n- `-int` 按整数排序（可与 `-regex` 组合）\n- `-drop-unmatched` 丢弃不匹配 `-regex` 的行',
   },
   {
     label: '!pivot',
@@ -76,6 +76,12 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
     label: '-int',
     detail: '按整数排序',
     documentation: '将排序键转为整数再比较，适用于数字排序。\n可与 `-regex` 组合使用。',
+  },
+  {
+    command: 'sort',
+    label: '-drop-unmatched',
+    detail: '丢弃不匹配正则的行',
+    documentation: '与 `-regex` 配合使用，丢弃不匹配正则的行。\n不指定时，不匹配的行以自身为排序键保留。',
   },
   {
     command: 'pivot',
