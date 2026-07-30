@@ -1,3 +1,7 @@
+## v0.0.9
+
+- Chore: reduce .vsix package size from ~4.4MB to ~50KB by excluding unused icon sizes in `.vscodeignore`
+
 ## v0.0.8
 
 - Feat: multi-line command parameters — `-` flags can be written on continuation lines
