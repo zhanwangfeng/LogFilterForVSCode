@@ -1,3 +1,7 @@
+## v0.0.12
+
+- Feat: `.lf` syntax highlighting now colors `-` parameter flags (e.g. `-desc`, `-regex`, `-drop-unmatched`) with a distinct color
+
 ## v0.0.11
 
 - Feat: `!sort` add `-drop-unmatched` flag — discard lines that don't match `-regex` pattern
