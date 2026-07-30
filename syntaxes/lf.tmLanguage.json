@@ -4,7 +4,8 @@
   "scopeName": "source.lf",
   "patterns": [
     { "include": "#comments" },
-    { "include": "#commands" }
+    { "include": "#commands" },
+    { "include": "#params" }
   ],
   "repository": {
     "comments": {
@@ -14,6 +15,10 @@
     "commands": {
       "name": "keyword.control.lf",
       "match": "^\\s*!\\w+.*$"
+    },
+    "params": {
+      "name": "entity.other.attribute-name.lf",
+      "match": "^\\s*-[\\w-]+"
     }
   }
 }
