@@ -10,3 +10,4 @@
 8. 等待开发者 merge 到 main
 9. `git checkout main && git pull`
 10. `git tag v{ver}` && `git push origin v{ver}`
+11. 打包vsix
