@@ -5,6 +5,8 @@
 
 A VS Code extension for pipeline-based log filtering. Write `.lf` rule files to filter, extract, and deduplicate log file content, then preview results directly in VS Code.
 
+GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
+
 ## Features
 
 - **Pipeline filtering**: Each rule's output feeds into the next, enabling progressive refinement
