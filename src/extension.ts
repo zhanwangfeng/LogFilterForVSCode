@@ -228,7 +228,7 @@ export function activate(context: vscode.ExtensionContext) {
       let targetLine = currentLine;
       while (targetLine >= 0) {
         const text = document.lineAt(targetLine).text.trim();
-        if (text !== '' && !text.startsWith('#')) break;
+        if (text !== '' && !text.startsWith('#') && !text.startsWith('-')) break;
         targetLine--;
       }
 
@@ -240,7 +240,7 @@ export function activate(context: vscode.ExtensionContext) {
       let patternIndex = 0;
       for (let line = 0; line <= targetLine; line++) {
         const text = document.lineAt(line).text.trim();
-        if (text !== '' && !text.startsWith('#')) {
+        if (text !== '' && !text.startsWith('#') && !text.startsWith('-')) {
           if (line === targetLine) break;
           patternIndex++;
         }

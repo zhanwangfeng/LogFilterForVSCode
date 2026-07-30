@@ -13,9 +13,29 @@ export type Rule = RegexRule | CommandRule;
 
 const SUPPORTED_COMMANDS = new Set(['dedupe', 'dedupe-consecutive', 'count', 'count-consecutive', 'sort', 'pivot']);
 
-export function parseLfFile(content: string): Rule[] {
-  const rules: Rule[] = [];
+function preprocessLfContent(content: string): string {
+  const result: string[] = [];
+  let lastMergeTarget = -1;
+
   for (const rawLine of content.split('\n')) {
+    const line = rawLine.trim();
+    if (line.startsWith('-') && lastMergeTarget >= 0) {
+      result[lastMergeTarget] += ' ' + line;
+    } else {
+      result.push(line);
+      if (line !== '' && !line.startsWith('#')) {
+        lastMergeTarget = result.length - 1;
+      }
+    }
+  }
+
+  return result.join('\n');
+}
+
+export function parseLfFile(content: string): Rule[] {
+  const normalized = preprocessLfContent(content);
+  const rules: Rule[] = [];
+  for (const rawLine of normalized.split('\n')) {
     const line = rawLine.trim();
     if (line === '' || line.startsWith('#')) continue;
 

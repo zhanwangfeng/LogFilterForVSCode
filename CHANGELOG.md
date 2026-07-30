@@ -1,3 +1,10 @@
+## v0.0.8
+
+- Feat: multi-line command parameters — `-` flags can be written on continuation lines
+- Feat: `-` continuation lines auto-merge to the preceding `!` command during parsing
+- Feat: completion for `-` on continuation lines, based on the nearest `!` command above
+- Feat: CodeLens and `Ctrl+Enter` skip `-` continuation lines
+
 ## v0.0.7
 
 - Feat: add `!pivot` command — Excel-style pivot table for log data
