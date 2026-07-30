@@ -66,10 +66,15 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
         case 'sort': {
           const desc = rule.params.includes('-desc');
           const asInt = rule.params.includes('-int');
+          const dropUnmatched = rule.params.includes('-drop-unmatched');
           const regexIdx = rule.params.indexOf('-regex');
           const regex = regexIdx !== -1 && regexIdx + 1 < rule.params.length
             ? new RegExp(rule.params[regexIdx + 1])
             : null;
+
+          if (dropUnmatched && regex) {
+            currentLines = currentLines.filter(line => regex.test(line));
+          }
 
           currentLines = [...currentLines].sort((a, b) => {
             const ra = regex ? regex.exec(a)?.[1] ?? a : a;

@@ -1,3 +1,7 @@
+## v0.0.11
+
+- Feat: `!sort` add `-drop-unmatched` flag — discard lines that don't match `-regex` pattern
+
 ## v0.0.10
 
 - Fix: `!pivot` separator line alignment — `┿` now correctly aligns with `│` in header/data rows
