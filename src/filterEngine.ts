@@ -395,8 +395,8 @@ function applyPivot(lines: string[], params: string[]): string[] {
   }
 
   // Separator
-  result.push('━'.repeat(rowWidth) + '┿' +
-    colWidths.map(w => '━'.repeat(w)).join('┿'));
+  result.push('━'.repeat(rowWidth + 1) + '┿' +
+    colWidths.map(w => '━'.repeat(w + 2)).join('┿'));
 
   // Render data rows with hierarchy
   let prevPrefix: string[] = [];

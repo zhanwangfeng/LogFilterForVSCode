@@ -1,3 +1,7 @@
+## v0.0.10
+
+- Fix: `!pivot` separator line alignment — `┿` now correctly aligns with `│` in header/data rows
+
 ## v0.0.9
 
 - Chore: reduce .vsix package size from ~4.4MB to ~50KB by excluding unused icon sizes in `.vscodeignore`
