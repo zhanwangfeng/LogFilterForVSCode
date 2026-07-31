@@ -1,92 +1,46 @@
 # LogFilter
 
-[![Visual Studio Marketplace Version](https://vsmarketplacebadges.dev/version-short/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
-[![Visual Studio Marketplace Installs](https://vsmarketplacebadges.dev/installs/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
+[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
+[![Installs](https://vsmarketplacebadges.dev/installs/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
 
-A VS Code extension for pipeline-based log filtering. Write `.lf` rule files to filter, extract, and deduplicate log file content, then preview results directly in VS Code.
+Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extract, and deduplicate log content — preview results instantly.
 
 GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
 
-## Features
-
-- **Pipeline filtering**: Each rule's output feeds into the next, enabling progressive refinement
-- **Regex filtering**: Keep lines matching a regex, or extract capture groups
-- **Deduplication**: Remove duplicate lines globally or consecutively
-- **Preview panel**: View filtered results in a dedicated webview panel
-- **Step-by-step execution**: Click `▶ Filter (Ctrl+Enter)` on any rule to run from the start up to that rule
-- **Quick execution**: Press `Ctrl+Enter` on any line to run the nearest valid rule above the cursor
-- **Syntax highlighting**: `.lf` files have full syntax highlighting and comment toggling (`Ctrl+/`)
-
 ## Quick Start
 
-### Step 1: Create a .lf file
-
-Open any `.log` file and click the **CreateLogFilter** button in the editor title bar. This creates a `.lf` file with the same name in the same directory.
-
-### Step 2: Write filter rules
-
-Edit the `.lf` file with rules:
+1. Open any `.log` file and click **CreateLogFilter** in the editor title bar
+2. Edit the `.lf` file with rules:
 
 ```lf
-# Lines starting with # are comments
-
-# Plain regex — keeps matching lines
-ERROR
-
-# Capture groups — extracts only captured content
-\[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]
-
-# Commands starting with !
-!dedupe
+# Comments start with #
+ERROR                                    # Keep lines matching regex
+\[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\] # Extract capture groups
+!dedupe                                  # Commands start with !
 ```
 
-### Step 3: Preview results
-
-Go back to the `.log` file and click **OpenPreview** in the editor title bar. For step-by-step execution, click `▶ Filter (Ctrl+Enter)` on any line in the `.lf` file, or press `Ctrl+Enter` with the cursor on that line.
+3. Go back to the `.log` file and click **OpenPreview**, or press `Ctrl+Enter` on any rule in the `.lf` file
 
 ## Rule Syntax
 
-### Comments
-
-```
-# This is a comment (line must start with `#` followed by a space)
-```
-
-### Regex patterns
-
-Each line is a JavaScript regex applied to every line of the current set:
-
-| Case | Behavior |
-|------|----------|
-| No match | Line is discarded |
-| Match, no capture group `()` | Full line passes to next stage |
-| Match, with capture group `()` | Only captured content is extracted, one group per line |
-
-```lf
-# Keep lines containing ERROR (plain filter)
-ERROR
-
-# Extract IP addresses (capture group extraction)
-\[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]
-
-# Global flag g — multiple matches per line
-(\w+)
-```
+| Type | Description |
+|------|-------------|
+| `# comment` | Line must start with `#` followed by a space |
+| `regex` | Keep matching lines; if capture groups `()`, extract only captured content |
+| `!command` | Operate on the entire line set |
 
 ### Commands
 
-Lines starting with `!` operate on the entire current line set:
-
 | Command | Description |
 |---------|-------------|
-| `!dedupe` | Remove duplicate lines globally, keep first occurrence |
-| `!dedupe-consecutive` | Remove consecutive duplicate lines (like `uniq`) |
-| `!count` | Merge duplicate lines, append repetition count `(N)` to each line |
-| `!count-consecutive` | Count consecutive duplicate lines (like `uniq -c`) |
-| `!sort` | Sort lines ascending (`-desc` descending, `-regex <pattern>` sort by captured content, `-int` numeric sort) |
-| `!pivot` | Pivot table — cross-tabulation with row/column fields, aggregation (`-p` pattern, `-r` rows, `-c` cols, `-v` values, `-f` filter, `-func` aggregator) |
+| `!dedupe` | Remove duplicate lines globally |
+| `!dedupe-consecutive` | Remove consecutive duplicates (`uniq`) |
+| `!count` | Merge duplicates, append count `(N)` |
+| `!count-consecutive` | Count consecutive duplicates (`uniq -c`) |
+| `!sort` | Sort lines (`-desc`, `-regex <pattern>`, `-int`) |
+| `!pivot` | Cross-tabulation (`-p` pattern, `-r` rows, `-c` cols, `-v` values, `-f` filter, `-func` aggregator) |
 
-Command parameters can be written on continuation lines (lines starting with `-` after indentation) for readability:
+Parameters can span continuation lines (indented lines starting with `-`):
 
 ```lf
 !pivot -p (\d+\.\d+\.\d+\.\d+).*?(\d{2}):
@@ -97,105 +51,46 @@ Command parameters can be written on continuation lines (lines starting with `-`
   -func count
 ```
 
-```lf
-ERROR
-\[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]
-!dedupe
-```
+## Pipeline
 
-## Pipeline Mechanism
-
-Each rule's output serves as the input for the next rule:
+Each rule's output feeds into the next:
 
 ```
-Raw log → Rule 1 → Result 1 → Rule 2 → Result 2 → ... → Preview
+Raw log → Rule 1 → Rule 2 → ... → Preview
 ```
 
-Example execution:
+Example — extract unique error IPs:
 
 ```
-Raw log:
+Input:
   ERROR [192.168.1.1] timeout
-  INFO [10.0.0.5] heartbeat
+  INFO  [10.0.0.5]   heartbeat
   ERROR [192.168.1.1] retry
 
-Rule 1: ERROR
-  → Keeps lines with ERROR (2 lines)
-
-Rule 2: \[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]
-  → Extracts IP addresses (2 lines: 192.168.1.1 / 192.168.1.1)
-
-Rule 3: !dedupe
-  → Deduplicates (1 line: 192.168.1.1)
+Rule 1: ERROR                     → 2 lines (ERROR only)
+Rule 2: \[(\d{1,3}\.\d+\.\d+\.\d+)\] → 2 lines (192.168.1.1, 192.168.1.1)
+Rule 3: !dedupe                   → 1 line  (192.168.1.1)
 ```
 
 ## Editor Features
 
-### .log file operations
+- **CreateLogFilter** — Create `.lf` from current `.log` (editor title button)
+- **OpenPreview** — Run all rules and show preview
+- **`▶ Filter (Ctrl+Enter)`** — Run from rule 1 to the current line
+- **`Ctrl+Enter`** (any line) — Run nearest valid rule above cursor
+- **`Ctrl+/`** — Toggle comment
+- **Syntax highlighting** — Comments (green), commands (purple), regex (default)
 
-- **CreateLogFilter**: Creates a `.lf` file (button in editor title bar)
-- **OpenPreview**: Applies all rules from the `.lf` file and shows preview
-
-### .lf file operations
-
-- **`▶ Filter (Ctrl+Enter)`**: CodeLens button above each rule, runs from rule 1 to that line
-- **`Ctrl+Enter`**: Run the nearest valid rule above the cursor (skips comments and blank lines)
-- **Syntax highlighting**: Comments (green), commands (purple), regex (default)
-- **`Ctrl+/`**: Toggle line comment
-
-## Installation
-
-Install from [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter) or build locally.
-
-> **Note**: The extension includes an icon (`icons/icon-128.png`) displayed on the Marketplace and in VS Code's extension list.
+## Install
 
 ```bash
 npm install
 npm run compile
 ```
 
-Press F5 in VS Code to launch an Extension Development Host for testing.
+Press `F5` in VS Code to launch an Extension Dev Host.
 
-## Examples
-
-### Example 1: Extract error IPs
-
-`app.log`:
-```
-2024-01-15 ERROR [10.0.0.1] Connection refused
-2024-01-15 INFO [10.0.0.2] Health check OK
-2024-01-15 ERROR [10.0.0.1] Retry failed
-```
-
-`app.lf`:
-```lf
-ERROR
-\[(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\]
-!dedupe
-```
-
-Preview result:
-```
-10.0.0.1
-```
-
-### Example 2: Extract timestamps
-
-```lf
-(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})
-```
-
-### Example 3: Multiple capture groups
-
-```lf
-(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})[^\[]+\[(\w+)\]
-```
-
-Input `192.168.1.1 - admin [ERROR]` produces:
-```
-192.168.1.1
-ERROR
-```
+Or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter).
 
 ## License
 
