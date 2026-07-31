@@ -71,8 +71,8 @@
 | `!dedupe-consecutive` | 无 | 去除连续重复行（类似 Unix `uniq`），只保留相邻重复中的第一条 |
 | `!count` | 无 | 合并重复行，在行尾以 `(xxx)` 形式标注每条的重复次数 |
 | `!count-consecutive` | 无 | 统计连续重复行的出现次数，在行尾以 `(xxx)` 形式标注（类似 `uniq -c`） |
-| `!sort` | `-desc` / `-regex <正则>` / `-int` | 对当前行集按字母排序，默认升序；`-desc` 降序；`-regex` 按捕获组提取内容排序；`-int` 按整数排序 |
-| `!pivot` | `-p <正则>` / `-n <N>:<别名>` / `-r <字段>` / `-c <字段>` / `-v <字段>` / `-f <字段> [正则]` / `-func <函数>` / `-fill <文本>` / `-sort rows|cols|both|none` | 数据透视表，行×列交叉统计；支持多级行列、多值、正则筛选、5种聚合函数、别名引用 |
+| `!sort` | `-desc` / `-regex <正则>` / `-int` / `-drop-unmatched` / `-skip-line <N>` | 对当前行集按字母排序，默认升序；`-desc` 降序；`-regex` 按捕获组提取内容排序；`-int` 按整数排序；`-drop-unmatched` 丢弃不匹配 `-regex` 的行；`-skip-line <N>` 跳过前 N 行不参与排序 |
+| `!pivot` | `-p <正则>` / `-n <N>:<别名>`（可省略索引自动编号）/ `-r <字段>` / `-c <字段>`（可省略）/ `-v <字段>` / `-f <字段> [正则]` / `-func <函数>` / `-fill <文本>` / `-sort rows\|cols\|both\|none` / `-view tree\|list\|csv\|tab` / `-table-view-format compact\|aligned` | 数据透视表，行×列交叉统计；支持多级行列、多值、正则筛选、5种聚合函数、别名引用、层级小计与多种视图/排版 |
 
 命令在流水线中占一个步骤编号，CodeLens 同样显示在其上方。命令不区分大小写（`!DEDUPE`、`!Dedupe` 均合法）。
 

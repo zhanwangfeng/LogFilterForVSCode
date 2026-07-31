@@ -172,7 +172,7 @@ export function activate(context: vscode.ExtensionContext) {
         return;
       }
 
-      const logLines = logContent.split('\n');
+      const logLines = logContent.replace(/\r\n/g, '\n').split('\n');
       const filteredLines = applyFilter(logLines, rules);
       const fileName = path.basename(logUri.fsPath);
 
@@ -206,7 +206,7 @@ export function activate(context: vscode.ExtensionContext) {
       if (patternIndex < 0 || patternIndex >= rules.length) return;
 
       const activeRules = rules.slice(0, patternIndex + 1);
-      const logLines = logContent.split('\n');
+      const logLines = logContent.replace(/\r\n/g, '\n').split('\n');
       const filteredLines = applyFilter(logLines, activeRules);
       const fileName = path.basename(logUri.fsPath);
 

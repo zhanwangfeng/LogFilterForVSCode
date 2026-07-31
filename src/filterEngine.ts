@@ -71,12 +71,23 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
           const regex = regexIdx !== -1 && regexIdx + 1 < rule.params.length
             ? new RegExp(rule.params[regexIdx + 1])
             : null;
+          const skipIdx = rule.params.indexOf('-skip-line');
+          const skipLine = skipIdx !== -1 && skipIdx + 1 < rule.params.length
+            ? Math.max(0, parseInt(rule.params[skipIdx + 1], 10) || 0)
+            : 0;
 
-          if (dropUnmatched && regex) {
-            currentLines = currentLines.filter(line => regex.test(line));
+          let head: string[] = [];
+          let tail = currentLines;
+          if (skipLine > 0) {
+            head = currentLines.slice(0, skipLine);
+            tail = currentLines.slice(skipLine);
           }
 
-          currentLines = [...currentLines].sort((a, b) => {
+          if (dropUnmatched && regex) {
+            tail = tail.filter(line => regex.test(line));
+          }
+
+          tail = [...tail].sort((a, b) => {
             const ra = regex ? regex.exec(a)?.[1] ?? a : a;
             const rb = regex ? regex.exec(b)?.[1] ?? b : b;
             let ka: string | number = ra;
@@ -88,6 +99,8 @@ export function applyFilter(lines: string[], rules: Rule[]): string[] {
             const cmp = asInt ? (ka as number) - (kb as number) : String(ka).localeCompare(String(kb));
             return desc ? -cmp : cmp;
           });
+
+          currentLines = [...head, ...tail];
           break;
         }
         case 'pivot': {
@@ -134,10 +147,13 @@ interface PivotConfig {
   rowIndices: number[];
   colIndices: number[];
   valIndices: number[] | null;
+  valRefs: string[];
   filters: FilterRule[];
   funcs: string[];
   fill: string;
   sort: 'none' | 'rows' | 'cols' | 'both';
+  view: 'tree' | 'list' | 'csv' | 'tab';
+  format: 'compact' | 'aligned';
 }
 
 const SEP = '\x00';
@@ -153,11 +169,15 @@ function parsePivotParams(params: string[]): PivotConfig {
   const rowIndices: number[] = [];
   const colIndices: number[] = [];
   const valIndices: number[] = [];
+  const valRefs: string[] = [];
   const filters: FilterRule[] = [];
   const funcs: string[] = [];
   let pattern: RegExp | null = null;
   let fill = '';
   let sort: 'none' | 'rows' | 'cols' | 'both' = 'none';
+  let view: 'tree' | 'list' | 'csv' | 'tab' = 'tree';
+  let format: 'compact' | 'aligned' = 'compact';
+  let autoIdx = 0;
 
   for (let i = 0; i < params.length; i++) {
     switch (params[i]) {
@@ -171,6 +191,8 @@ function parsePivotParams(params: string[]): PivotConfig {
           const idx = parseInt(part.slice(0, colonIdx), 10) - 1;
           const alias = part.slice(colonIdx + 1);
           aliasMap.set(alias.toLowerCase(), idx);
+        } else {
+          aliasMap.set(part.toLowerCase(), autoIdx++);
         }
         break;
       }
@@ -180,9 +202,12 @@ function parsePivotParams(params: string[]): PivotConfig {
       case '-c':
         colIndices.push(resolveField(params[++i], aliasMap));
         break;
-      case '-v':
-        valIndices.push(resolveField(params[++i], aliasMap));
+      case '-v': {
+        const raw = params[++i];
+        valRefs.push(raw);
+        valIndices.push(resolveField(raw, aliasMap));
         break;
+      }
       case '-f': {
         const field = resolveField(params[++i], aliasMap);
         if (i + 1 < params.length && !params[i + 1].startsWith('-')) {
@@ -201,6 +226,12 @@ function parsePivotParams(params: string[]): PivotConfig {
       case '-sort':
         sort = params[++i] as typeof sort;
         break;
+      case '-view':
+        view = params[++i] as typeof view;
+        break;
+      case '-table-view-format':
+        format = params[++i] as typeof format;
+        break;
     }
   }
 
@@ -210,10 +241,13 @@ function parsePivotParams(params: string[]): PivotConfig {
     rowIndices,
     colIndices,
     valIndices: valIndices.length > 0 ? valIndices : null,
+    valRefs,
     filters,
     funcs: funcs.length > 0 ? funcs : ['count'],
     fill,
     sort,
+    view,
+    format,
   };
 }
 
@@ -227,11 +261,114 @@ function aggregate(values: number[], func: string): number {
   }
 }
 
+function groupRowKeysByHierarchy(rowKeys: string[]): string[] {
+  const firstSeen = new Map<string, number>();
+  const ranked = rowKeys.map(rk => {
+    const parts = rk.split(SEP);
+    const rank = parts.map((_, d) => {
+      const prefix = parts.slice(0, d + 1).join(SEP);
+      if (!firstSeen.has(prefix)) firstSeen.set(prefix, firstSeen.size);
+      return firstSeen.get(prefix)!;
+    });
+    return { rk, rank };
+  });
+  ranked.sort((a, b) => {
+    const len = Math.min(a.rank.length, b.rank.length);
+    for (let i = 0; i < len; i++) {
+      if (a.rank[i] !== b.rank[i]) return a.rank[i] - b.rank[i];
+    }
+    return a.rank.length - b.rank.length;
+  });
+  return ranked.map(r => r.rk);
+}
+
+type CellMap = Map<number, number[]>;
+type ColMap = Map<string, CellMap>;
+
+function valueHeaderLabel(cfg: PivotConfig, v: number): string {
+  const func = cfg.funcs[v] || cfg.funcs[0];
+  if (!cfg.valIndices) return func;
+  return `${cfg.valRefs[v]}(${func})`;
+}
+
+function renderPivotList(
+  matrix: Map<string, ColMap>,
+  rowKeys: string[],
+  colKeys: string[],
+  cfg: PivotConfig,
+  fixedSep?: string
+): string[] {
+  const numValues = cfg.valIndices ? cfg.valIndices.length : 1;
+  const fillDefault = cfg.fill || (cfg.funcs[0] === 'count' ? '0' : '-');
+
+  const nameByIndex = new Map<number, string>();
+  for (const [alias, idx] of cfg.aliasMap) {
+    if (!nameByIndex.has(idx)) nameByIndex.set(idx, alias);
+  }
+  const rowNames = cfg.rowIndices.map(idx => nameByIndex.get(idx) || String(idx + 1));
+  const colNames = cfg.colIndices.map(idx => nameByIndex.get(idx) || String(idx + 1));
+  const headerParts = [...rowNames];
+  if (colNames.length > 0) headerParts.push(...colNames);
+  headerParts.push(...cfg.funcs.map((_, v) => valueHeaderLabel(cfg, v)));
+
+  const rows: string[][] = [headerParts];
+  for (const rk of rowKeys) {
+    const rowParts = rk.split(SEP);
+    const cm = matrix.get(rk)!;
+    for (const ck of colKeys) {
+      const cellMap = cm.get(ck);
+      if (!cellMap) continue;
+      const colParts = ck === '' ? [] : ck.split(SEP);
+      const row: string[] = [...rowParts];
+      if (colParts.length > 0) row.push(...colParts);
+      for (let v = 0; v < numValues; v++) {
+        const agg = cellMap.get(v);
+        row.push((agg && agg.length > 0) ? String(agg[0]) : fillDefault);
+      }
+      rows.push(row);
+    }
+  }
+
+  if (fixedSep !== undefined) {
+    // csv / tab: plain delimited output, aligned is not supported
+    if (fixedSep === ',') {
+      const escapeCsv = (s: string) => /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+      return rows.map(r => r.map(escapeCsv).join(','));
+    }
+    return rows.map(r => r.join(fixedSep));
+  }
+
+  if (cfg.format !== 'aligned') {
+    return rows.map(r => r.join(' | '));
+  }
+
+  const numCols = rows[0].length;
+  const widths: number[] = new Array(numCols).fill(0);
+  for (const r of rows) {
+    for (let i = 0; i < numCols; i++) {
+      widths[i] = Math.max(widths[i], (r[i] || '').length);
+    }
+  }
+
+  const result: string[] = [];
+  for (let ri = 0; ri < rows.length; ri++) {
+    const r = rows[ri];
+    const isData = ri > 0;
+    const cells = r.map((cell, i) => {
+      const w = widths[i];
+      const isValue = isData && i >= r.length - numValues;
+      return (isValue ? padRight(cell, w + 1) : pad(cell, w + 1)) + ' ';
+    });
+    result.push(cells.join('│ '));
+  }
+  return result;
+}
+
 function applyPivot(lines: string[], params: string[]): string[] {
   const cfg = parsePivotParams(params);
 
-  if (cfg.rowIndices.length === 0 || cfg.colIndices.length === 0) {
-    return ['!pivot: -r and -c are required'];
+  if (cfg.rowIndices.length === 0) {
+    return ['!pivot: -r is required'];
   }
 
   // Normalize funcs to match valIndices count
@@ -242,8 +379,6 @@ function applyPivot(lines: string[], params: string[]): string[] {
     cfg.funcs.push(cfg.funcs[0] || 'count');
   }
 
-  type CellMap = Map<number, number[]>;
-  type ColMap = Map<string, CellMap>;
   const matrix = new Map<string, ColMap>();
 
   for (const line of lines) {
@@ -298,6 +433,10 @@ function applyPivot(lines: string[], params: string[]): string[] {
     }
   }
 
+  if (matrix.size === 0) {
+    return ['!pivot: no matching rows'];
+  }
+
   // Aggregate
   for (const cm of matrix.values()) {
     for (const cellMap of cm.values()) {
@@ -318,29 +457,77 @@ function applyPivot(lines: string[], params: string[]): string[] {
     return ap.length - bp.length;
   };
 
-  const rowKeys = [...matrix.keys()];
+  let rowKeys = [...matrix.keys()];
   const sortedColKeys = [...new Set([...matrix.values()].flatMap(cm => [...cm.keys()]))];
 
   if (cfg.sort === 'rows' || cfg.sort === 'both') rowKeys.sort(sortByParts);
+  else rowKeys = groupRowKeysByHierarchy(rowKeys);
   if (cfg.sort === 'cols' || cfg.sort === 'both') sortedColKeys.sort(sortByParts);
+
+  if (cfg.view !== 'tree') {
+    const fixedSep = cfg.view === 'csv' ? ',' : cfg.view === 'tab' ? '\t' : undefined;
+    return renderPivotList(matrix, rowKeys, sortedColKeys, cfg, fixedSep);
+  }
+
+  // Subtotals per hierarchy prefix: each row level rolls up all its children
+  const subtotals = new Map<string, Map<string, Map<number, number[]>>>();
+  for (const rk of matrix.keys()) {
+    const parts = rk.split(SEP);
+    const cm = matrix.get(rk)!;
+    for (let d = 0; d < parts.length; d++) {
+      const prefix = parts.slice(0, d + 1).join(SEP);
+      let sc = subtotals.get(prefix);
+      if (!sc) { sc = new Map(); subtotals.set(prefix, sc); }
+      for (const [ck, cellMap] of cm) {
+        let scm = sc.get(ck);
+        if (!scm) { scm = new Map(); sc.set(ck, scm); }
+        for (const [vi, vals] of cellMap) {
+          if (vals.length === 0) continue;
+          if (!scm.has(vi)) scm.set(vi, []);
+          scm.get(vi)!.push(vals[0]);
+        }
+      }
+    }
+  }
+
+  const subtotalVal = (prefix: string, ck: string, vi: number): number | null => {
+    const sc = subtotals.get(prefix);
+    const scm = sc && sc.get(ck);
+    const vals = scm && scm.get(vi);
+    if (!vals || vals.length === 0) return null;
+    return aggregate(vals, cfg.funcs[vi] || cfg.funcs[0]);
+  };
 
   const numValues = cfg.valIndices ? cfg.valIndices.length : 1;
   const numColSlots = sortedColKeys.length * numValues;
+  const numLevels = cfg.rowIndices.length;
+
+  // Field display names (alias if defined, otherwise 1-based index)
+  const nameByIndex = new Map<number, string>();
+  for (const [alias, idx] of cfg.aliasMap) {
+    if (!nameByIndex.has(idx)) nameByIndex.set(idx, alias);
+  }
+  const rowFieldNames = cfg.rowIndices.map(idx => nameByIndex.get(idx) || String(idx + 1));
 
   // Build column header levels
   const colHeaders: string[][] = [];
-  for (const ck of sortedColKeys) {
-    const parts = ck.split(SEP);
-    for (let l = 0; l < parts.length; l++) {
-      if (!colHeaders[l]) colHeaders[l] = [];
-      colHeaders[l].push(parts[l]);
-    }
-    // Value function labels (if multiple values) go under each column
-    if (numValues > 1) {
-      for (let v = 0; v < numValues; v++) {
-        const level = parts.length + v;
-        if (!colHeaders[level]) colHeaders[level] = [];
-        colHeaders[level].push(cfg.funcs[v]);
+  if (cfg.colIndices.length === 0) {
+    // No columns: single-column summary grouped by rows, funcs as the header
+    colHeaders[0] = cfg.funcs.map((_, v) => valueHeaderLabel(cfg, v));
+  } else {
+    for (const ck of sortedColKeys) {
+      const parts = ck.split(SEP);
+      for (let l = 0; l < parts.length; l++) {
+        if (!colHeaders[l]) colHeaders[l] = [];
+        colHeaders[l].push(parts[l]);
+      }
+      // Value function labels (if multiple values) go under each column
+      if (numValues > 1) {
+        for (let v = 0; v < numValues; v++) {
+          const level = parts.length + v;
+          if (!colHeaders[level]) colHeaders[level] = [];
+          colHeaders[level].push(valueHeaderLabel(cfg, v));
+        }
       }
     }
   }
@@ -353,18 +540,14 @@ function applyPivot(lines: string[], params: string[]): string[] {
     }
   }
 
-  // Measure widths
-  let rowWidth = 0;
-  const rowLabels: { depth: number; text: string }[] = [];
+  // Measure row-level column widths
+  const rowWidths: number[] = rowFieldNames.map(name => Math.max(name.length, 2));
   for (const rk of rowKeys) {
     const parts = rk.split(SEP);
-    for (let d = 0; d < parts.length; d++) {
-      const indent = d > 0 ? '  ' : '';
-      rowWidth = Math.max(rowWidth, indent.length + parts[d].length);
-      rowLabels.push({ depth: d, text: parts[d] });
+    for (let d = 0; d < numLevels; d++) {
+      rowWidths[d] = Math.max(rowWidths[d], parts[d].length);
     }
   }
-  rowWidth = Math.max(rowWidth, 2);
 
   const colWidths: number[] = new Array(numColSlots).fill(0);
   for (let l = 0; l < colHeaders.length; l++) {
@@ -373,14 +556,19 @@ function applyPivot(lines: string[], params: string[]): string[] {
     }
   }
   for (const rk of rowKeys) {
-    const cm = matrix.get(rk)!;
-    for (const [ck, cellMap] of cm) {
-      const baseIdx = sortedColKeys.indexOf(ck);
-      if (baseIdx < 0) continue;
-      for (let v = 0; v < numValues; v++) {
-        const agg = cellMap.get(v);
-        if (agg && agg.length > 0) {
-          colWidths[baseIdx * numValues + v] = Math.max(colWidths[baseIdx * numValues + v], String(agg[0]).length);
+    const parts = rk.split(SEP);
+    for (let d = 0; d < parts.length; d++) {
+      const prefix = parts.slice(0, d + 1).join(SEP);
+      const sc = subtotals.get(prefix);
+      if (!sc) continue;
+      for (const [ck, scm] of sc) {
+        const baseIdx = sortedColKeys.indexOf(ck);
+        if (baseIdx < 0) continue;
+        for (let v = 0; v < numValues; v++) {
+          const s = subtotalVal(prefix, ck, v);
+          if (s !== null) {
+            colWidths[baseIdx * numValues + v] = Math.max(colWidths[baseIdx * numValues + v], String(s).length);
+          }
         }
       }
     }
@@ -391,67 +579,111 @@ function applyPivot(lines: string[], params: string[]): string[] {
 
   const result: string[] = [];
 
-  // Render column headers
-  for (let l = 0; l < colHeaders.length; l++) {
-    const parts = colHeaders[l];
-    const row = ' '.repeat(rowWidth) + ' │ ' +
-      parts.map((p, ci) => pad(p, colWidths[ci])).join(' │ ');
-    result.push(row.replace(/\s+$/, ''));
+  const aligned = cfg.format === 'aligned';
+
+  if (!aligned) {
+    // compact: CSV-like, no column alignment, no separator line
+    const headerRows: string[][] = [];
+    for (let l = 0; l < colHeaders.length; l++) {
+      const levelCells = l === 0 ? [...rowFieldNames] : rowFieldNames.map(() => '');
+      headerRows.push([...levelCells, ...colHeaders[l]]);
+    }
+    for (const h of headerRows) {
+      result.push(h.join(' | ').replace(/( \| )*$/, ''));
+    }
+
+    for (let ri = 0; ri < rowKeys.length; ri++) {
+      const rk = rowKeys[ri];
+      const parts = rk.split(SEP);
+
+      // Determine which prefix levels changed vs previous row
+      const commonPrefixLen = ri > 0
+        ? (() => { let c = 0; const prev = rowKeys[ri - 1].split(SEP); while (c < Math.min(parts.length, prev.length) && parts[c] === prev[c]) c++; return c; })()
+        : 0;
+
+      const depths: number[] = [];
+      for (let d = commonPrefixLen; d < parts.length; d++) {
+        depths.push(d);
+      }
+      if (depths.length === 0) depths.push(0);
+
+      for (const d of depths) {
+        const prefix = parts.slice(0, d + 1).join(SEP);
+        const levelCells: string[] = [];
+        for (let j = 0; j < numLevels; j++) {
+          levelCells.push(j === d ? parts[j] : '');
+        }
+        const valueCells: string[] = [];
+        for (let ci = 0; ci < sortedColKeys.length; ci++) {
+          const ck = sortedColKeys[ci];
+          for (let v = 0; v < numValues; v++) {
+            const val = subtotalVal(prefix, ck, v);
+            valueCells.push(val !== null ? String(val) : (cfg.fill || (cfg.funcs[0] === 'count' ? '0' : '-')));
+          }
+        }
+        result.push([...levelCells, ...valueCells].join(' | '));
+      }
+    }
+    return result;
   }
 
-  // Separator
-  result.push('━'.repeat(rowWidth + 1) + '┿' +
-    colWidths.map(w => '━'.repeat(w + 2)).join('┿'));
+  // aligned: padded columns, ┿ aligned with │, separator line
+  const cellSep = '│ ';
+  const textCell = (content: string, baseW: number) => pad(content, baseW + 1) + ' ';
+  const numCell = (content: string, baseW: number) => padRight(content, baseW + 1) + ' ';
+  const blankCell = (baseW: number) => ' '.repeat(baseW + 2);
 
-  // Render data rows with hierarchy
-  let prevPrefix: string[] = [];
+  const headerLevelCells = rowFieldNames.map((name, d) => textCell(name, rowWidths[d]));
+  const blankLevelCells = rowWidths.map(w => blankCell(w));
+
+  // Render column headers (row field names on the first level)
+  for (let l = 0; l < colHeaders.length; l++) {
+    const levelCells = l === 0 ? headerLevelCells : blankLevelCells;
+    const valueParts = colHeaders[l];
+    const row = levelCells.join(cellSep) + cellSep +
+      valueParts.map((p, ci) => textCell(p, colWidths[ci])).join(cellSep);
+    result.push(row);
+  }
+
+  // Separator: first column spans its width, subsequent columns get +1 so ┿ lines up with │
+  const sepSegments: string[] = [];
+  rowWidths.forEach((w, i) => sepSegments.push('━'.repeat(w + 2 + (i === 0 ? 0 : 1))));
+  colWidths.forEach(w => sepSegments.push('━'.repeat(w + 3)));
+  result.push(sepSegments.join('┿'));
+
+  // Render data rows: one line per newly changed hierarchy level, one column per level
   for (let ri = 0; ri < rowKeys.length; ri++) {
     const rk = rowKeys[ri];
     const parts = rk.split(SEP);
-    const cm = matrix.get(rk)!;
 
     // Determine which prefix levels changed vs previous row
     const commonPrefixLen = ri > 0
       ? (() => { let c = 0; const prev = rowKeys[ri - 1].split(SEP); while (c < Math.min(parts.length, prev.length) && parts[c] === prev[c]) c++; return c; })()
       : 0;
 
-    // Build display: we show each non-common prefix part on its own line
-    const displayParts: string[] = [];
-    for (let d = 0; d < parts.length; d++) {
-      if (d >= commonPrefixLen) {
-        displayParts.push((d > 0 ? '  ' : '') + parts[d]);
-      }
-    }
-
-    // If the entire prefix is new (e.g., first row or all new), we may need multiple lines
-    // Simple approach: one row per compound key, show only the deepest new level
-    const displayLines: { label: string; depth: number }[] = [];
+    const depths: number[] = [];
     for (let d = commonPrefixLen; d < parts.length; d++) {
-      displayLines.push({ label: (d > 0 ? '  ' : '') + parts[d], depth: d });
+      depths.push(d);
     }
+    if (depths.length === 0) depths.push(0);
 
-    if (displayLines.length === 0) {
-      displayLines.push({ label: parts.map((p, i) => i > 0 ? '  ' + p : p).join(''), depth: 0 });
-    }
-
-    for (let di = 0; di < displayLines.length; di++) {
-      const dl = displayLines[di];
-      const cells: string[] = [];
+    for (const d of depths) {
+      const prefix = parts.slice(0, d + 1).join(SEP);
+      const levelCells: string[] = [];
+      for (let j = 0; j < numLevels; j++) {
+        levelCells.push(j === d ? textCell(parts[j], rowWidths[j]) : blankCell(rowWidths[j]));
+      }
+      const valueCells: string[] = [];
       for (let ci = 0; ci < sortedColKeys.length; ci++) {
         const ck = sortedColKeys[ci];
-        const cellMap = cm.get(ck) || new Map();
         for (let v = 0; v < numValues; v++) {
-          const agg = cellMap.get(v);
-          const val = (agg && agg.length > 0) ? agg[0] : null;
+          const val = subtotalVal(prefix, ck, v);
           const fill = val !== null ? String(val) : (cfg.fill || (cfg.funcs[0] === 'count' ? '0' : '-'));
-          cells.push(padRight(fill, colWidths[ci * numValues + v]));
+          valueCells.push(numCell(fill, colWidths[ci * numValues + v]));
         }
       }
-      const paddedLabel = pad(dl.label, rowWidth);
-      result.push(paddedLabel + ' │ ' + cells.join(' │ '));
+      result.push(levelCells.join(cellSep) + cellSep + valueCells.join(cellSep));
     }
-
-    prevPrefix = parts;
   }
 
   return result;

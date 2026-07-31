@@ -30,28 +30,30 @@ const COMMAND_COMPLETIONS: CompletionEntry[] = [
   {
     label: '!sort',
     detail: '升序排序',
-    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序\n- `-int` 按整数排序（可与 `-regex` 组合）\n- `-drop-unmatched` 丢弃不匹配 `-regex` 的行',
+    documentation: '对当前行集按字母排序（默认升序）。支持参数：\n- `-desc` 降序\n- `-regex <正则>` 按捕获组提取内容排序\n- `-int` 按整数排序（可与 `-regex` 组合）\n- `-drop-unmatched` 丢弃不匹配 `-regex` 的行\n- `-skip-line <N>` 前 N 行原样保留，其余行排序',
   },
   {
     label: '!pivot',
     detail: '数据透视表（行×列交叉统计）',
     documentation: '对当前行集做交叉统计，输出二维表格。\n' +
       '用法：\n' +
-      '  !pivot -p <正则> -r <字段> [-r <字段>]… -c <字段> [-c <字段>]… [-v <字段>]… [-f <字段> [正则]]…\n\n' +
+      '  !pivot -p <正则> -r <字段> [-r <字段>]… [-c <字段>]… [-v <字段>]… [-f <字段> [正则]]…\n\n' +
       '流程：\n' +
       '  1. -p 正则用捕获组定义字段（每个()对应一个字段）\n' +
       '  2. -n <N>:<别名> 为字段设置别名（可选）\n' +
       '  3. -r / -c / -v / -f 引用字段（索引或别名），重复使用添加多个\n\n' +
       '参数：\n' +
       '  -p <正则>    带多个捕获组的正则，定义字段结构\n' +
-      '  -n <N>:<别名> 为第 N 个捕获组设置别名\n' +
+      '  -n <N>:<别名> 为第 N 个捕获组设置别名；省略索引按顺序自动编号（-n a -n b = -n 1:a -n 2:b）\n' +
       '  -r <字段>    行标签（可重复，首次=外层，后续=内层）\n' +
-      '  -c <字段>    列标题（可重复）\n' +
+      '  -c <字段>    列标题（可重复，可省略）\n' +
       '  -v <字段>    聚合值（可重复）\n' +
       '  -f <字段> [正则]  筛选器，可选正则匹配\n' +
       '  -func <F>    聚合函数 count|sum|avg|min|max（可重复）\n' +
       '  -fill <文本> 空单元格填充\n' +
-      '  -sort rows|cols|both|none  排序\n\n' +
+      '  -sort rows|cols|both|none  排序\n' +
+      '  -view tree|list|csv|tab  显示方式（tree=层级汇总，list=平铺，csv=逗号，tab=制表符；csv/tab 不支持 aligned）\n' +
+      '  -table-view-format compact|aligned  表格分隔线格式（紧凑型/对齐型）\n\n' +
       '示例：\n' +
       '  !pivot -p (\\d+\\.\\d+\\.\\d+\\.\\d+).*?(\\d{2}): -n 1:IP -n 2:Hour -r IP -c Hour -func count\n' +
       '  !pivot -p ... -r 1 -r 2 -c 3 -v 4 -func avg -f 1 ERROR',
@@ -84,6 +86,12 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
     documentation: '与 `-regex` 配合使用，丢弃不匹配正则的行。\n不指定时，不匹配的行以自身为排序键保留。',
   },
   {
+    command: 'sort',
+    label: '-skip-line <N>',
+    detail: '跳过前 N 行不参与排序',
+    documentation: '从头开始的前 N 行原样保留、不参与排序，其余行正常排序。\n与 `-drop-unmatched` 联用时，被跳过的行同样不会被过滤。',
+  },
+  {
     command: 'pivot',
     label: '-p <正则>',
     detail: '字段定义（必填）',
@@ -92,8 +100,8 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
   {
     command: 'pivot',
     label: '-n <N>:<别名>',
-    detail: '字段别名',
-    documentation: '为第 N 个捕获组设置别名。后续可通过别名引用。\n例：-n 1:IP -n 2:Hour',
+    detail: '字段别名（可省略索引）',
+    documentation: '为第 N 个捕获组设置别名。后续可通过别名引用。\n省略索引时按顺序自动编号：-n a -n b 等价于 -n 1:a -n 2:b。\n例：-n 1:IP -n 2:Hour',
   },
   {
     command: 'pivot',
@@ -136,6 +144,18 @@ const PARAM_COMPLETIONS: (CompletionEntry & { command: string })[] = [
     label: '-sort rows|cols|both|none',
     detail: '排序方式',
     documentation: 'rows:行标签排序 cols:列标签排序 both:行列均排序 none:按首次出现顺序。',
+  },
+  {
+    command: 'pivot',
+    label: '-view tree|list|csv|tab',
+    detail: '显示方式',
+    documentation: 'tree:层级树状显示，外层显示滚动汇总（默认） list:平铺列表，每行完整展示所有层级字段与值 csv:逗号分隔（支持 aligned 之外的全部格式） tab:制表符分隔\ncsv/tab 不支持 -table-view-format aligned。\n例：sstx3274_log | 111 | 510 | 18',
+  },
+  {
+    command: 'pivot',
+    label: '-table-view-format compact|aligned',
+    detail: '表格分隔线格式',
+    documentation: 'compact:紧凑型，内容前后各一个空格（默认） aligned:对齐型，内容左右留白，┿ 精确对齐 │，右侧边沿干净。',
   },
 ];
 
