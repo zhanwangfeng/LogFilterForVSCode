@@ -1,0 +1,8 @@
+{
+  "displayName": "LogFilter",
+  "description": "基于管道的日志过滤，支持正则提取与去重",
+  "command.openPreview.title": "LogFilter：打开预览",
+  "command.createLogFilter.title": "LogFilter：创建 LogFilter 文件",
+  "command.filterUpToLine.title": "LogFilter：过滤到当前行",
+  "command.filterCurrentLine.title": "LogFilter：过滤当前行"
+}

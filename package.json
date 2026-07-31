@@ -1,7 +1,7 @@
 {
   "name": "logfilter",
-  "displayName": "LogFilter",
-  "description": "Pipeline-based log filtering with regex extraction and deduplication",
+  "displayName": "%displayName%",
+  "description": "%description%",
   "repository": {
     "type": "git",
     "url": "https://github.com/zhanwangfeng/LogFilterForVSCode.git"
@@ -27,19 +27,19 @@
     "commands": [
       {
         "command": "logFilter.openPreview",
-        "title": "LogFilter: Open Preview"
+        "title": "%command.openPreview.title%"
       },
       {
         "command": "logFilter.createLogFilter",
-        "title": "LogFilter: Create LogFilter File"
+        "title": "%command.createLogFilter.title%"
       },
       {
         "command": "logFilter.filterUpToLine",
-        "title": "LogFilter: Filter Up to This Line"
+        "title": "%command.filterUpToLine.title%"
       },
       {
         "command": "logFilter.filterCurrentLine",
-        "title": "LogFilter: Filter Current Line"
+        "title": "%command.filterCurrentLine.title%"
       }
     ],
     "languages": [

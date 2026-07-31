@@ -3,6 +3,8 @@
 [![VS Marketplace](https://vsmarketplacebadges.dev/version-short/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
 [![Installs](https://vsmarketplacebadges.dev/installs/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
 
+**English** | [中文](README.zh-CN.md)
+
 Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extract, and deduplicate log content — preview results instantly.
 
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
