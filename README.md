@@ -5,7 +5,8 @@
 
 Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extract, and deduplicate log content — preview results instantly.
 
-GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
+- GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
+- VSCode: https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter
 
 ## Quick Start
 
@@ -67,9 +68,9 @@ Input:
   INFO  [10.0.0.5]   heartbeat
   ERROR [192.168.1.1] retry
 
-Rule 1: ERROR                     → 2 lines (ERROR only)
+Rule 1: ERROR                        → 2 lines (ERROR only)
 Rule 2: \[(\d{1,3}\.\d+\.\d+\.\d+)\] → 2 lines (192.168.1.1, 192.168.1.1)
-Rule 3: !dedupe                   → 1 line  (192.168.1.1)
+Rule 3: !dedupe                      → 1 line  (192.168.1.1)
 ```
 
 ## Editor Features
