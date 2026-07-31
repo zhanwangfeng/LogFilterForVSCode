@@ -10,6 +10,10 @@
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
 - VSCode: https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter
 
+## 演示
+
+![使用演示](docs/usage_show.gif)
+
 ## 快速开始
 
 1. 打开任意 `.log` 文件，点击编辑器标题栏中的 **CreateLogFilter**
