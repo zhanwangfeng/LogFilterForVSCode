@@ -10,6 +10,10 @@ Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extr
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
 - VSCode: https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter
 
+## Show
+
+![Usage Show](docs/usage_show.gif)
+
 ## Quick Start
 
 1. Open any `.log` file and click **CreateLogFilter** in the editor title bar
