@@ -74,8 +74,8 @@ ERROR
 |------|------|
 | `!dedupe` | 去除全局重复行，保留首次出现 |
 | `!dedupe-consecutive` | 去除连续重复行（类似 `uniq`） |
-| `!sort` | 升序排序（`-desc` 降序，`-regex <正则>` 按提取内容排序，`-int` 按整数排序，`-drop-unmatched` 丢弃不匹配正则的行） |
-| `!pivot` | 数据透视表（`-p <正则>` 定义字段，`-r` 行，`-c` 列，`-v` 值，`-f` 筛选，`-func` 聚合） |
+| `!sort` | 升序排序（`-desc` 降序，`-regex <正则>` 按提取内容排序，`-int` 按整数排序，`-drop-unmatched` 丢弃不匹配正则的行，`-skip-line <N>` 跳过前 N 行不参与排序） |
+| `!pivot` | 数据透视表（`-p <正则>` 定义字段，`-r` 行，`-c` 列，`-v` 值，`-f` 筛选，`-func` 聚合，`-view tree\|list\|csv\|tab` 显示方式，`-table-view-format compact\|aligned` 表格格式） |
 
 #### 多行参数
 

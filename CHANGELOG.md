@@ -1,3 +1,14 @@
+## v0.0.14
+
+- Feat: `!pivot -view tree|list|csv|tab` — display modes (tree = hierarchical subtotals, list = flat, csv/tab = delimited export)
+- Feat: `!pivot -table-view-format compact|aligned` — compact (default) or aligned columns with `┿` separator line
+- Feat: `!pivot -n <别名>` — auto-numbered aliases when the index is omitted (`-n a -n b` = `-n 1:a -n 2:b`)
+- Feat: `!pivot` multi-value column headers show `-v 参数(函数)` (e.g. `copy_id(sum)`, `1(count)`) to identify each value column
+- Feat: `!sort -skip-line <N>` — keep the first N lines untouched, sort the rest
+- Fix: `!pivot` no longer requires `-c` — row-only aggregation (`-r`) produces a single-column summary
+- Fix: `!pivot` reports `no matching rows` instead of rendering an empty table
+- Fix: log lines split with `\r\n` preserved (CRLF files) so commands match correctly
+
 ## v0.0.13
 
 - Feat: README 添加演示 GIF（`docs/usage_show.gif`），直观展示过滤流程

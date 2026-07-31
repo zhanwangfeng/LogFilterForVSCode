@@ -44,8 +44,8 @@ ERROR                                    # 保留匹配正则的行
 | `!dedupe-consecutive` | 去除连续重复（类似 `uniq`） |
 | `!count` | 合并重复行，并附加计数 `(N)` |
 | `!count-consecutive` | 统计连续重复（类似 `uniq -c`） |
-| `!sort` | 排序（`-desc`、`-regex <pattern>`、`-int`） |
-| `!pivot` | 透视交叉表（`-p` 模式、`-r` 行、`-c` 列、`-v` 值、`-f` 过滤、`-func` 聚合函数） |
+| `!sort` | 排序（`-desc`、`-regex <pattern>`、`-int`、`-drop-unmatched`、`-skip-line <N>`） |
+| `!pivot` | 透视交叉表（`-p` 模式、`-r` 行、`-c` 列、`-v` 值、`-f` 过滤、`-func` 聚合函数、`-view tree\|list\|csv\|tab`、`-table-view-format compact\|aligned`） |
 
 参数可以跨续行（以 `-` 开头的缩进行）：
 

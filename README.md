@@ -44,8 +44,8 @@ ERROR                                    # Keep lines matching regex
 | `!dedupe-consecutive` | Remove consecutive duplicates (`uniq`) |
 | `!count` | Merge duplicates, append count `(N)` |
 | `!count-consecutive` | Count consecutive duplicates (`uniq -c`) |
-| `!sort` | Sort lines (`-desc`, `-regex <pattern>`, `-int`) |
-| `!pivot` | Cross-tabulation (`-p` pattern, `-r` rows, `-c` cols, `-v` values, `-f` filter, `-func` aggregator) |
+| `!sort` | Sort lines (`-desc`, `-regex <pattern>`, `-int`, `-drop-unmatched`, `-skip-line <N>`) |
+| `!pivot` | Cross-tabulation (`-p` pattern, `-r` rows, `-c` cols, `-v` values, `-f` filter, `-func` aggregator, `-view tree\|list\|csv\|tab`, `-table-view-format compact\|aligned`) |
 
 Parameters can span continuation lines (indented lines starting with `-`):
 
