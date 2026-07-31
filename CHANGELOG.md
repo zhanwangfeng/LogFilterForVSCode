@@ -1,3 +1,7 @@
+## v0.0.13
+
+- Feat: README 添加演示 GIF（`docs/usage_show.gif`），直观展示过滤流程
+
 ## v0.0.12
 
 - Feat: `.lf` syntax highlighting now colors `-` parameter flags (e.g. `-desc`, `-regex`, `-drop-unmatched`) with a distinct color
