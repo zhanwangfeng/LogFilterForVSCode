@@ -1,14 +1,14 @@
 # LogFilter
 
-[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
-[![Installs](https://vsmarketplacebadges.dev/installs/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
+[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
+[![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
 
 [English](README.md) | **中文**
 
 基于管道的 VS Code 日志过滤插件。编写 `.lf` 规则文件来过滤、提取、去重日志内容 —— 实时预览结果。
 
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
-- VSCode: https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter
+- VSCode: https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter
 
 ## 演示
 
@@ -97,7 +97,7 @@ npm run compile
 
 在 VS Code 中按 `F5` 启动扩展开发主机。
 
-或从 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter) 安装。
+或从 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter) 安装。
 
 ## 许可证
 
