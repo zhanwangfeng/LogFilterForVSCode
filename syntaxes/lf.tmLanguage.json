@@ -1,6 +1,6 @@
 {
   "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
-  "name": "LogFilter",
+  "name": "LogFilterPro",
   "scopeName": "source.lf",
   "patterns": [
     { "include": "#comments" },

@@ -1,3 +1,12 @@
+## v0.0.16
+
+- Chore: rename extension identifier `logfilter` → `logfilterpro` (Marketplace ID: `zhanwangfeng.logfilterpro`)
+- Chore: rename brand `LogFilter` → `LogFilterPro` (display name, language alias, tmLanguage name, command titles)
+- Chore: rename command prefix `logFilter.*` → `logFilterPro.*` (e.g. `logFilterPro.openPreview`, `logFilterPro.createLogFilterPro`)
+- Chore: rename context key `logFilter:lfFileExists` → `logFilterPro:lfFileExists`
+- Chore: rename vsix output `logfilter-{ver}.vsix` → `logfilterpro-{ver}.vsix`
+- Chore: update README marketplace badges and links to new publisher + extension name
+
 ## v0.0.15
 
 - Chore: update extension publisher from `logfilter` to `zhanwangfeng` (Marketplace URL, badge links, README docs all updated)
