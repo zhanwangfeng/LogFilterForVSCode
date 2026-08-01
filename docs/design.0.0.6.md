@@ -1,4 +1,4 @@
-# LogFilter v0.0.6 — 扩展图标配置
+# LogFilterPro v0.0.6 — 扩展图标配置
 
 ## 目标
 

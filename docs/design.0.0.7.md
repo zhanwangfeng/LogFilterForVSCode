@@ -1,8 +1,8 @@
-# LogFilter v0.0.7 — 数据透视命令 `!pivot`
+# LogFilterPro v0.0.7 — 数据透视命令 `!pivot`
 
 ## 目标
 
-为 LogFilter 添加 Excel 风格的数据透视（Pivot Table）能力，通过一行 `!pivot` 命令对当前行集做交叉统计，输出格式化二维表格。
+为 LogFilterPro 添加 Excel 风格的数据透视（Pivot Table）能力，通过一行 `!pivot` 命令对当前行集做交叉统计，输出格式化二维表格。
 
 ## Excel 透视映射
 

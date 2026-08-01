@@ -1,4 +1,4 @@
-# LogFilter v0.0.10 — 修复 `!pivot` 分隔线对齐
+# LogFilterPro v0.0.10 — 修复 `!pivot` 分隔线对齐
 
 ## 目标
 

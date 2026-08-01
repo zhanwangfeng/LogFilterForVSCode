@@ -1,4 +1,4 @@
-# LogFilter v0.0.5 — 命令参数系统 & !sort 命令
+# LogFilterPro v0.0.5 — 命令参数系统 & !sort 命令
 
 ## 目标
 

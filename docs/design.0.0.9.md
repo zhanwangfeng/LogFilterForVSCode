@@ -1,4 +1,4 @@
-# LogFilter v0.0.9 — 精简 VSIX 体积
+# LogFilterPro v0.0.9 — 精简 VSIX 体积
 
 ## 目标
 

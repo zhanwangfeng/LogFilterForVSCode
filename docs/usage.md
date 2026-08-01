@@ -1,14 +1,14 @@
-# LogFilter 使用说明
+# LogFilterPro 使用说明
 
 ## 概述
 
-LogFilter 是一个 VS Code 扩展，用于对 `.log` 文件进行流水线式筛选与提取。通过编写 `.lf` 规则文件，可以逐层过滤日志内容，最终预览筛选结果。
+LogFilterPro 是一个 VS Code 扩展，用于对 `.log` 文件进行流水线式筛选与提取。通过编写 `.lf` 规则文件，可以逐层过滤日志内容，最终预览筛选结果。
 
 ## 快速开始
 
 ### 第一步：创建 .lf 文件
 
-打开任意 `.log` 文件，点击编辑器右上角的 **CreateLogFilter** 按钮，自动在同目录下创建 `同名.lf` 文件并打开。
+打开任意 `.log` 文件，点击编辑器右上角的 **CreateLogFilterPro** 按钮，自动在同目录下创建 `同名.lf` 文件并打开。
 
 ### 第二步：编写筛选规则
 
@@ -131,7 +131,7 @@ ERROR
 
 ### .log 文件
 
-- **CreateLogFilter**：创建 `.lf` 文件（右上角按钮）
+- **CreateLogFilterPro**：创建 `.lf` 文件（右上角按钮）
 - **OpenPreview**：按 `.lf` 中全部规则筛选并预览（右上角按钮）
 
 ### .lf 文件
@@ -143,7 +143,7 @@ ERROR
 
 ## 扩展图标
 
-LogFilter 扩展在 VS Code Marketplace 和扩展列表中显示自定义图标（`icons/icon-128.png`），方便识别。
+LogFilterPro 扩展在 VS Code Marketplace 和扩展列表中显示自定义图标（`icons/icon-128.png`），方便识别。
 
 ## 快捷键
 

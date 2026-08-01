@@ -1,4 +1,4 @@
-# LogFilter v0.0.14 — `!pivot` 增强
+# LogFilterPro v0.0.14 — `!pivot` 增强
 
 ## 目标
 

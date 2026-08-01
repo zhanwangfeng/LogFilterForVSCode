@@ -1,8 +1,8 @@
-# LogFilter v0.0.13 — README 添加演示 GIF
+# LogFilterPro v0.0.13 — README 添加演示 GIF
 
 ## 目标
 
-README 目前仅有文字说明，缺少直观的演示。新增一个演示 GIF 图，让用户一眼了解 LogFilter 的过滤流程。
+README 目前仅有文字说明，缺少直观的演示。新增一个演示 GIF 图，让用户一眼了解 LogFilterPro 的过滤流程。
 
 ## 改动
 

@@ -1,15 +1,15 @@
 ## v0.0.16
 
-- Chore: rename extension identifier `logfilter` → `logfilterpro` (Marketplace ID: `zhanwangfeng.logfilterpro`)
-- Chore: rename brand `LogFilter` → `LogFilterPro` (display name, language alias, tmLanguage name, command titles)
-- Chore: rename command prefix `logFilter.*` → `logFilterPro.*` (e.g. `logFilterPro.openPreview`, `logFilterPro.createLogFilterPro`)
-- Chore: rename context key `logFilter:lfFileExists` → `logFilterPro:lfFileExists`
-- Chore: rename vsix output `logfilter-{ver}.vsix` → `logfilterpro-{ver}.vsix`
+- Chore: rename extension identifier `logfilterpro` → `logfilterpro` (Marketplace ID: `zhanwangfeng.logfilterpro`)
+- Chore: rename brand `LogFilterPro` → `LogFilterPro` (display name, language alias, tmLanguage name, command titles)
+- Chore: rename command prefix `logFilterPro.*` → `logFilterPro.*` (e.g. `logFilterPro.openPreview`, `logFilterPro.createLogFilterPro`)
+- Chore: rename context key `logFilterPro:lfFileExists` → `logFilterPro:lfFileExists`
+- Chore: rename vsix output `logfilterpro-{ver}.vsix` → `logfilterpro-{ver}.vsix`
 - Chore: update README marketplace badges and links to new publisher + extension name
 
 ## v0.0.15
 
-- Chore: update extension publisher from `logfilter` to `zhanwangfeng` (Marketplace URL, badge links, README docs all updated)
+- Chore: update extension publisher from `logfilterpro` to `zhanwangfeng` (Marketplace URL, badge links, README docs all updated)
 - Chore: bump version to 0.0.15
 
 ## v0.0.14
@@ -77,7 +77,7 @@
 
 - Feat: add `Ctrl+Enter` shortcut — execute the nearest valid filter rule above the cursor
 - Feat: CodeLens now shows `▶ Filter (Ctrl+Enter)` to indicate the keyboard shortcut
-- Feat: add `logFilter.filterCurrentLine` command
+- Feat: add `logFilterPro.filterCurrentLine` command
 
 ## v0.0.3
 
@@ -91,7 +91,7 @@
 
 ## v0.0.1
 
-Initial release of LogFilter — a VS Code extension for pipeline-based log filtering.
+Initial release of LogFilterPro — a VS Code extension for pipeline-based log filtering.
 
 ### Features
 

@@ -1,4 +1,4 @@
-# LogFilter v0.0.11 — `!sort` 增加 `-drop-unmatched` 参数
+# LogFilterPro v0.0.11 — `!sort` 增加 `-drop-unmatched` 参数
 
 ## 目标
 

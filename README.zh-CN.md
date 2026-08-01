@@ -1,4 +1,4 @@
-# LogFilter
+# LogFilterPro
 
 [![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilterPro.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilterPro)
 [![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilterPro.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilterPro)

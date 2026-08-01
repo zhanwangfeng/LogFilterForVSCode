@@ -25,9 +25,9 @@
 12. 安装依赖与打包 vsix 文件（`npm install` → `npm run package`）（AI 执行；如遇到 vsce / Node 版本不兼容，AI 自动降级到兼容版本，例如 `@vscode/vsce@^2.0.0`）
 13. 创建 GitHub Release 并上传 vsix 附件：
     - release notes 取自 `CHANGELOG.md` 中该版本的变更说明（AI 自动提取）
-    - 通过 `gh release create v{ver} ./release/logfilter-{ver}.vsix --title "v{ver}" --notes-file <提取的 CHANGELOG 内容>` 或等效 GitHub API 创建 Release（关联 tag `v{ver}`）并上传 `release/*.vsix` 作为附件（AI 执行）
+    - 通过 `gh release create v{ver} ./release/logfilterpro-{ver}.vsix --title "v{ver}" --notes-file <提取的 CHANGELOG 内容>` 或等效 GitHub API 创建 Release（关联 tag `v{ver}`）并上传 `release/*.vsix` 作为附件（AI 执行）
     - 鉴权：优先使用系统中已登录的 `gh` CLI；若未登录则通过 `gh auth login` 或 git 凭证缓存 `echo "protocol=https\nhost=github.com\n" | git credential fill` 获取（AI 执行）
-14. （可选）如需发布到 VS Code Marketplace：`vsce publish --packagePath ./release/logfilter-{ver}.vsix`，publisher 需与 `package.json` 中一致（AI 执行，使用已配置的 PAT）
+14. （可选）如需发布到 VS Code Marketplace：`vsce publish --packagePath ./release/logfilterpro-{ver}.vsix`，publisher 需与 `package.json` 中一致（AI 执行，使用已配置的 PAT）
 
 ## 四、AI 执行规范
 

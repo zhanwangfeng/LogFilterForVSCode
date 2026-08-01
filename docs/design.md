@@ -1,19 +1,19 @@
-# LogFilter - VS Code 扩展设计文档
+# LogFilterPro - VS Code 扩展设计文档
 
 ## 需求
 
-1. 名称：LogFilter
+1. 名称：LogFilterPro
 2. 若当前文件为 `.log` 文件，则编辑器右上角显示按钮
 3. 按钮逻辑：
    - 读取 `当前文件名.lf`，若该文件存在 → 显示 **OpenPreview** 按钮
-   - 若该文件不存在 → 显示 **CreateLogFilter** 按钮
-4. 点击 **CreateLogFilter** → 在当前文件同目录下创建 `当前文件名.lf` 文件，自动打开 `.lf` 文件
+   - 若该文件不存在 → 显示 **CreateLogFilterPro** 按钮
+4. 点击 **CreateLogFilterPro** → 在当前文件同目录下创建 `当前文件名.lf` 文件，自动打开 `.lf` 文件
 5. 点击 **OpenPreview** → 读取 `.lf` 中的全部规则，按流水线方式层层筛选/提取，在新标签页中预览结果
 6. 若当前文件为 `.lf` 文件，每行规则上方显示 **▶ Filter (Ctrl+Enter)** CodeLens 按钮
 7. 点击某行 **▶ Filter (Ctrl+Enter)** → 从 `.lf` 第 1 条规则执行到该行止，对同目录下同名 `.log` 文件进行筛选，预览结果；也可按 `Ctrl+Enter` 快捷键直接触发
 8. 按钮状态始终与磁盘上 `.lf` 文件的实际存在状态保持一致：
-   - CreateLogFilter 时若 `.lf` 已存在 → 不创建，直接刷新按钮为 OpenPreview
-   - OpenPreview 时若 `.lf` 已不存在 → 取消预览，刷新按钮为 CreateLogFilter
+   - CreateLogFilterPro 时若 `.lf` 已存在 → 不创建，直接刷新按钮为 OpenPreview
+   - OpenPreview 时若 `.lf` 已不存在 → 取消预览，刷新按钮为 CreateLogFilterPro
 
 ## .lf 文件语法
 
@@ -196,31 +196,31 @@ Step 4（正则：提取最后一段）:
 
 ### Step 1：项目初始化
 - 使用 `yo generator-code` 创建 TypeScript 扩展项目
-- 名称：`LogFilter`
+- 名称：`LogFilterPro`
 - 发布者：自定义
 
 ### Step 2：注册命令与激活条件（package.json）
 - 命令 ID：
-  - `logFilter.openPreview` — 完整预览
-  - `logFilter.createLogFilter` — 创建 .lf 文件
-  - `logFilter.filterUpToLine` — 从 .lf 的某行执行筛选到指定位置
+  - `logFilterPro.openPreview` — 完整预览
+  - `logFilterPro.createLogFilterPro` — 创建 .lf 文件
+  - `logFilterPro.filterUpToLine` — 从 .lf 的某行执行筛选到指定位置
 - 标题：
-  - `LogFilter: Open Preview`
-  - `LogFilter: Create LogFilter File`
-  - `LogFilter: Filter Up to This Line`
+  - `LogFilterPro: Open Preview`
+  - `LogFilterPro: Create LogFilterPro File`
+  - `LogFilterPro: Filter Up to This Line`
 - activationEvents：
-  - `onCommand:logFilter.openPreview`
-  - `onCommand:logFilter.createLogFilter`
+  - `onCommand:logFilterPro.openPreview`
+  - `onCommand:logFilterPro.createLogFilterPro`
   - `onLanguage:lf`（编辑 .lf 文件时激活，用于 CodeLens）
 - contributes.languages：注册 `.lf` 文件的语言 ID 为 `lf`
 - contributes.menus.editor/title：配置 .log 文件的按钮
 
 ### Step 3：实现编辑器标题栏按钮（动态切换）
 - 通过 `package.json` 的 `menus.editor/title` 贡献点注册两个按钮
-- 通过 `setContext` 设置 `logFilter:lfFileExists` 上下文键值，用于 `when` 条件切换
+- 通过 `setContext` 设置 `logFilterPro:lfFileExists` 上下文键值，用于 `when` 条件切换
 - 仅 .log 文件显示按钮
 
-### Step 4：实现 CreateLogFilter 命令（extension.ts）
+### Step 4：实现 CreateLogFilterPro 命令（extension.ts）
 1. 获取当前激活编辑器，构造同目录下 `{filename}.lf` 路径
 2. 若 `.lf` 已存在 → 跳过，刷新按钮为 OpenPreview
 3. 若不存在 → 创建空文件，提示成功，刷新按钮，自动打开 `.lf` 文件
@@ -232,7 +232,7 @@ Step 4（正则：提取最后一段）:
   "languages": [{
     "id": "lf",
     "extensions": [".lf"],
-    "aliases": ["LogFilter"],
+    "aliases": ["LogFilterPro"],
     "configuration": "./language-configuration.json"
   }]
 }
@@ -242,7 +242,7 @@ Step 4（正则：提取最后一段）:
 - 注册 `vscode.languages.registerCodeLensProvider`，语言范围为 `lf`
 - 对 `.lf` 文件的每一非空、非注释、非 `-` 续行（无论正则还是命令），在其上方创建一个 CodeLens：
   - `title`: `▶ Filter (Ctrl+Enter)`
-  - `command`: `logFilter.filterUpToLine`
+  - `command`: `logFilterPro.filterUpToLine`
   - `arguments`: `[{lineIndex, lfUri, logUri}]` — 当前行号、.lf 文件 URI、对应 .log 文件 URI
 - 续行（以 `-` 开头）不显示 CodeLens，不计入 `patternIndex`
 - 当 `.lf` 文件内容变更时自动刷新 CodeLens（`onDidChangeEvent`）
@@ -296,7 +296,7 @@ Step 4（正则：提取最后一段）:
 ### Step 13：打包与调试
 - 按 F5 启动 Extension Development Host
 - 打开 `.log` 文件 → 验证右上角按钮出现（根据 `.lf` 文件是否存在显示不同按钮）
-- 点击 CreateLogFilter → 验证 `.lf` 文件已创建，按钮切换为 OpenPreview
+- 点击 CreateLogFilterPro → 验证 `.lf` 文件已创建，按钮切换为 OpenPreview
 - 点击 OpenPreview → 验证预览标签页已创建
 - 打开 `.lf` 文件 → 验证每行上方出现 ▶ Filter 按钮
 - 点击某行 ▶ Filter → 验证预览结果只应用到该行
@@ -308,7 +308,7 @@ Step 4（正则：提取最后一段）:
 - 持续输入字母可进一步筛选匹配的命令
 
 ### Step 15：实现 filterCurrentLine 命令（extension.ts）
-- 注册命令 `logFilter.filterCurrentLine`，绑定快捷键 `Ctrl+Enter`
+- 注册命令 `logFilterPro.filterCurrentLine`，绑定快捷键 `Ctrl+Enter`
 - 获取当前光标所在行号
 - 从当前行向上查找最近的**非空、非注释、非 `-` 续行**（跳过空行、`#` 注释行、`-` 续行）
 - 计算该行对应的 `patternIndex`（从文件开头到目标行之间的有效规则数，跳过续行）
@@ -325,7 +325,7 @@ Step 4（正则：提取最后一段）:
 ## 目录结构
 
 ```
-LogFilter/
+LogFilterPro/
 ├── .vscode/
 ├── src/
 │   ├── extension.ts            # 主入口
@@ -393,7 +393,7 @@ LogFilter/
 
 ## 备注
 
-- 仅 `.log` 文件在编辑器标题栏显示 OpenPreview / CreateLogFilter 按钮
+- 仅 `.log` 文件在编辑器标题栏显示 OpenPreview / CreateLogFilterPro 按钮
 - 按钮根据 `当前文件名.lf` 是否存在动态切换，状态始终与磁盘实际状态对齐
 - 编辑 `.lf` 文件时，每行规则上方显示 ▶ Filter (Ctrl+Enter) CodeLens（续行除外）
 - 点击某行 ▶ Filter (Ctrl+Enter) 或按 `Ctrl+Enter`，从原文件开始执行第 1 条到该行的全部规则，输出最终结果到预览窗口
