@@ -45,8 +45,12 @@
     "languages": [
       {
         "id": "lf",
-        "extensions": [".lf"],
-        "aliases": ["LogFilterPro"],
+        "extensions": [
+          ".lf"
+        ],
+        "aliases": [
+          "LogFilterPro"
+        ],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -88,6 +92,8 @@
   "devDependencies": {
     "@types/node": "^20.0.0",
     "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^2.32.0",
+    "cheerio": "^1.0.0-rc.12",
     "typescript": "^5.7.0"
   }
 }
