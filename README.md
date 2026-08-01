@@ -1,14 +1,14 @@
 # LogFilter
 
-[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
-[![Installs](https://vsmarketplacebadges.dev/installs/logfilter.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=logfilter.LogFilter)
+[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
+[![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
 
 **English** | [中文](README.zh-CN.md)
 
 Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extract, and deduplicate log content — preview results instantly.
 
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
-- VSCode: https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter
+- VSCode: https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter
 
 ## Show
 
@@ -97,7 +97,7 @@ npm run compile
 
 Press `F5` in VS Code to launch an Extension Dev Host.
 
-Or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=logfilter.logfilter).
+Or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter).
 
 ## License
 

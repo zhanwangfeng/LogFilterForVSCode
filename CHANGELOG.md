@@ -1,3 +1,8 @@
+## v0.0.15
+
+- Chore: update extension publisher from `logfilter` to `zhanwangfeng` (Marketplace URL, badge links, README docs all updated)
+- Chore: bump version to 0.0.15
+
 ## v0.0.14
 
 - Feat: `!pivot -view tree|list|csv|tab` — display modes (tree = hierarchical subtotals, list = flat, csv/tab = delimited export)
