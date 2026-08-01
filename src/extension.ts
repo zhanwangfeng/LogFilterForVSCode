@@ -7,7 +7,7 @@ import { LfCompletionProvider } from './completionProvider';
 
 function showPreview(logFileName: string, resultLines: string[], appliedCount: number, totalCount: number) {
   const panel = vscode.window.createWebviewPanel(
-    'logFilter.preview',
+    'logFilterPro.preview',
     `${logFileName} (Preview)`,
     { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
     { enableScripts: false }
@@ -97,7 +97,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   async function refreshLfContext(): Promise<void> {
     const exists = await lfFileExists();
-    await vscode.commands.executeCommand('setContext', 'logFilter:lfFileExists', exists);
+    await vscode.commands.executeCommand('setContext', 'logFilterPro:lfFileExists', exists);
   }
 
   context.subscriptions.push(
@@ -107,7 +107,7 @@ export function activate(context: vscode.ExtensionContext) {
   refreshLfContext();
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('logFilter.createLogFilter', async () => {
+    vscode.commands.registerCommand('logFilterPro.createLogFilterPro', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
         vscode.window.showErrorMessage('No active editor found');
@@ -134,7 +134,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('logFilter.openPreview', async () => {
+    vscode.commands.registerCommand('logFilterPro.openPreview', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor) {
         vscode.window.showErrorMessage('No active editor found');
@@ -181,7 +181,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('logFilter.filterUpToLine', async (args: { patternIndex: number; lfUri: vscode.Uri }) => {
+    vscode.commands.registerCommand('logFilterPro.filterUpToLine', async (args: { patternIndex: number; lfUri: vscode.Uri }) => {
       const { patternIndex, lfUri } = args;
       const logUri = lfToLogUri(lfUri);
 
@@ -215,7 +215,7 @@ export function activate(context: vscode.ExtensionContext) {
   );
 
   context.subscriptions.push(
-    vscode.commands.registerCommand('logFilter.filterCurrentLine', async () => {
+    vscode.commands.registerCommand('logFilterPro.filterCurrentLine', async () => {
       const editor = vscode.window.activeTextEditor;
       if (!editor || editor.document.languageId !== 'lf') {
         vscode.window.showErrorMessage('No active .lf file found');
@@ -247,7 +247,7 @@ export function activate(context: vscode.ExtensionContext) {
       }
 
       const lfUri = document.uri;
-      await vscode.commands.executeCommand('logFilter.filterUpToLine', { patternIndex, lfUri });
+      await vscode.commands.executeCommand('logFilterPro.filterUpToLine', { patternIndex, lfUri });
     })
   );
 

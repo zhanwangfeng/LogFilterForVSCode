@@ -1,14 +1,14 @@
 # LogFilter
 
-[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
-[![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
+[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilterPro.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilterPro)
+[![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilterPro.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilterPro)
 
 [English](README.md) | **中文**
 
 基于管道的 VS Code 日志过滤插件。编写 `.lf` 规则文件来过滤、提取、去重日志内容 —— 实时预览结果。
 
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
-- VSCode: https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter
+- VSCode: https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilterpro
 
 ## 演示
 
@@ -16,7 +16,7 @@
 
 ## 快速开始
 
-1. 打开任意 `.log` 文件，点击编辑器标题栏中的 **CreateLogFilter**
+1. 打开任意 `.log` 文件，点击编辑器标题栏中的 **CreateLogFilterPro**
 2. 编辑 `.lf` 文件中的规则：
 
 ```lf
@@ -81,7 +81,7 @@ ERROR                                    # 保留匹配正则的行
 
 ## 编辑器功能
 
-- **CreateLogFilter** — 从当前 `.log` 文件创建 `.lf`（编辑器标题栏按钮）
+- **CreateLogFilterPro** — 从当前 `.log` 文件创建 `.lf`（编辑器标题栏按钮）
 - **OpenPreview** — 运行所有规则并显示预览
 - **`▶ Filter (Ctrl+Enter)`** — 从规则 1 运行到当前行
 - **`Ctrl+Enter`**（任意行）— 运行光标上方最近的有效规则
@@ -97,7 +97,7 @@ npm run compile
 
 在 VS Code 中按 `F5` 启动扩展开发主机。
 
-或从 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter) 安装。
+或从 [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilterpro) 安装。
 
 ## 许可证
 

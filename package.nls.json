@@ -1,8 +1,8 @@
 {
-  "displayName": "LogFilter",
+  "displayName": "LogFilterPro",
   "description": "Pipeline-based log filtering with regex extraction and deduplication",
-  "command.openPreview.title": "LogFilter: Open Preview",
-  "command.createLogFilter.title": "LogFilter: Create LogFilter File",
-  "command.filterUpToLine.title": "LogFilter: Filter Up to This Line",
-  "command.filterCurrentLine.title": "LogFilter: Filter Current Line"
+  "command.openPreview.title": "LogFilterPro: Open Preview",
+  "command.createLogFilterPro.title": "LogFilterPro: Create LogFilterPro File",
+  "command.filterUpToLine.title": "LogFilterPro: Filter Up to This Line",
+  "command.filterCurrentLine.title": "LogFilterPro: Filter Current Line"
 }

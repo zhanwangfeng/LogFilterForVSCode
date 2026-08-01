@@ -1,14 +1,14 @@
 # LogFilter
 
-[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
-[![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilter.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilter)
+[![VS Marketplace](https://vsmarketplacebadges.dev/version-short/zhanwangfeng.LogFilterPro.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilterPro)
+[![Installs](https://vsmarketplacebadges.dev/installs/zhanwangfeng.LogFilterPro.svg)](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.LogFilterPro)
 
 **English** | [中文](README.zh-CN.md)
 
 Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extract, and deduplicate log content — preview results instantly.
 
 - GitHub: https://github.com/zhanwangfeng/LogFilterForVSCode
-- VSCode: https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter
+- VSCode: https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilterpro
 
 ## Show
 
@@ -16,7 +16,7 @@ Pipeline-based log filtering for VS Code. Write `.lf` rule files to filter, extr
 
 ## Quick Start
 
-1. Open any `.log` file and click **CreateLogFilter** in the editor title bar
+1. Open any `.log` file and click **CreateLogFilterPro** in the editor title bar
 2. Edit the `.lf` file with rules:
 
 ```lf
@@ -81,7 +81,7 @@ Rule 3: !dedupe                      → 1 line  (192.168.1.1)
 
 ## Editor Features
 
-- **CreateLogFilter** — Create `.lf` from current `.log` (editor title button)
+- **CreateLogFilterPro** — Create `.lf` from current `.log` (editor title button)
 - **OpenPreview** — Run all rules and show preview
 - **`▶ Filter (Ctrl+Enter)`** — Run from rule 1 to the current line
 - **`Ctrl+Enter`** (any line) — Run nearest valid rule above cursor
@@ -97,7 +97,7 @@ npm run compile
 
 Press `F5` in VS Code to launch an Extension Dev Host.
 
-Or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilter).
+Or install from the [VS Code Marketplace](https://marketplace.visualstudio.com/items?itemName=zhanwangfeng.logfilterpro).
 
 ## License
 

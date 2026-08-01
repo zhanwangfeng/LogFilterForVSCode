@@ -1,12 +1,12 @@
 {
-  "name": "logfilter",
+  "name": "logfilterpro",
   "displayName": "%displayName%",
   "description": "%description%",
   "repository": {
     "type": "git",
     "url": "https://github.com/zhanwangfeng/LogFilterForVSCode.git"
   },
-  "version": "0.0.15",
+  "version": "0.0.16",
   "publisher": "zhanwangfeng",
   "license": "MIT",
   "icon": "icons/icon-128.png",
@@ -17,28 +17,28 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:logFilter.openPreview",
-    "onCommand:logFilter.createLogFilter",
-    "onCommand:logFilter.filterCurrentLine",
+    "onCommand:logFilterPro.openPreview",
+    "onCommand:logFilterPro.createLogFilterPro",
+    "onCommand:logFilterPro.filterCurrentLine",
     "onLanguage:lf"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "logFilter.openPreview",
+        "command": "logFilterPro.openPreview",
         "title": "%command.openPreview.title%"
       },
       {
-        "command": "logFilter.createLogFilter",
-        "title": "%command.createLogFilter.title%"
+        "command": "logFilterPro.createLogFilterPro",
+        "title": "%command.createLogFilterPro.title%"
       },
       {
-        "command": "logFilter.filterUpToLine",
+        "command": "logFilterPro.filterUpToLine",
         "title": "%command.filterUpToLine.title%"
       },
       {
-        "command": "logFilter.filterCurrentLine",
+        "command": "logFilterPro.filterCurrentLine",
         "title": "%command.filterCurrentLine.title%"
       }
     ],
@@ -46,7 +46,7 @@
       {
         "id": "lf",
         "extensions": [".lf"],
-        "aliases": ["LogFilter"],
+        "aliases": ["LogFilterPro"],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -59,7 +59,7 @@
     ],
     "keybindings": [
       {
-        "command": "logFilter.filterCurrentLine",
+        "command": "logFilterPro.filterCurrentLine",
         "key": "ctrl+enter",
         "when": "editorLangId == lf"
       }
@@ -67,14 +67,14 @@
     "menus": {
       "editor/title": [
         {
-          "command": "logFilter.openPreview",
+          "command": "logFilterPro.openPreview",
           "group": "navigation",
-          "when": "resourceExtname == .log && logFilter:lfFileExists"
+          "when": "resourceExtname == .log && logFilterPro:lfFileExists"
         },
         {
-          "command": "logFilter.createLogFilter",
+          "command": "logFilterPro.createLogFilterPro",
           "group": "navigation",
-          "when": "resourceExtname == .log && !logFilter:lfFileExists"
+          "when": "resourceExtname == .log && !logFilterPro:lfFileExists"
         }
       ]
     }
@@ -83,7 +83,7 @@
     "vscode:prepublish": "npm run compile",
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "node -e \"const v=require('./package.json').version; require('child_process').execSync('vsce package --out ./release/logfilter-'+v+'.vsix',{stdio:'inherit',shell:true})\""
+    "package": "node -e \"const v=require('./package.json').version; require('child_process').execSync('vsce package --out ./release/logfilterpro-'+v+'.vsix',{stdio:'inherit',shell:true})\""
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
