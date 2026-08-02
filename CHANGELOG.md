@@ -1,3 +1,7 @@
+## v0.0.17
+
+- Feat: preview panel now reuses one tab per log filename — re-running a filter on the same file refreshes the existing preview tab instead of opening a new one
+
 ## v0.0.16
 
 - Chore: rename extension identifier `logfilterpro` → `logfilterpro` (Marketplace ID: `zhanwangfeng.logfilterpro`)
