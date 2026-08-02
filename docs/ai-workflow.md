@@ -16,8 +16,8 @@
 
 7. 提交本地改动（`git add` + `git commit`，commit message 含版本号和概要）（AI 执行）
 8. 推送开发分支：`git push origin dev{ver}`（AI 执行）
-9. 通过 `gh` CLI 或 GitHub API 创建 Pull Request（标题：`Release v{ver}`，body 自动填入 `docs/design.{ver}.md` 概要及 `CHANGELOG.md` 条目）并合并到 main（AI 执行，合并策略：**Squash and merge** 或按开发者偏好的 **Create a merge commit**；PR 标题与 commit message 需保留版本号和概要）
-10. 切回 main 并拉取合并结果：`git checkout main && git pull`（AI 执行）
+9. 合并开发分支到 main（AI 执行，**直接用 git 命令，不创建 PR、不询问合并策略**）：`git checkout main && git pull && git merge --no-ff dev{ver} -m "Merge branch 'dev{ver}' into main" && git push origin main`（合并策略固定为 **Create a merge commit (--no-ff)**，merge commit message 保留版本号与概要）
+10. （已并入步骤 9）main 已是最新合并结果
 11. 打标签并推送：`git tag v{ver} && git push origin v{ver}`（AI 执行）
 
 ## 三、发布阶段
@@ -31,6 +31,6 @@
 
 ## 四、AI 执行规范
 
-- 每个阶段开始前 AI 输出当前执行概要与步骤清单，遇到需要人工确认的决策（如是否覆盖现有 tag、是否使用 squash merge）才提问，否则全自动。
+- 每个阶段开始前 AI 输出当前执行概要与步骤清单，遇到需要人工确认的决策（如是否覆盖现有 tag）才提问，否则全自动。合并策略已固定为 **Create a merge commit (--no-ff)**，不再询问。
 - 所有 git 命令、API 调用的输出记录在对应步骤的上下文中，失败时 AI 自动修复（例如依赖冲突执行 `npm install --force`，版本不兼容降级，网络失败重试）。
 - 版本号 `{ver}` 一律从用户指令提取；若指令未明确则 AI 询问。
