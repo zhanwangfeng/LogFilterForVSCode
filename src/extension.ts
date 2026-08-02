@@ -5,14 +5,9 @@ import { applyFilter } from './filterEngine';
 import { LfCodeLensProvider } from './codelensProvider';
 import { LfCompletionProvider } from './completionProvider';
 
-function showPreview(logFileName: string, resultLines: string[], appliedCount: number, totalCount: number) {
-  const panel = vscode.window.createWebviewPanel(
-    'logFilterPro.preview',
-    `${logFileName} (Preview)`,
-    { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
-    { enableScripts: false }
-  );
+const previewPanels = new Map<string, vscode.WebviewPanel>();
 
+function buildPreviewHtml(resultLines: string[], appliedCount: number, totalCount: number): string {
   const config = vscode.workspace.getConfiguration('editor');
   const fontFamily = config.get<string>('fontFamily') || 'Consolas, monospace';
   const fontSize = config.get<number>('fontSize') || 14;
@@ -23,7 +18,7 @@ function showPreview(logFileName: string, resultLines: string[], appliedCount: n
   const fg = isDark ? '#d4d4d4' : '#000000';
   const resultText = resultLines.join('\n');
 
-  panel.webview.html = `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -60,6 +55,25 @@ function showPreview(logFileName: string, resultLines: string[], appliedCount: n
 <pre>${escapeHtml(resultText)}</pre>
 </body>
 </html>`;
+}
+
+function showPreview(logFileName: string, resultLines: string[], appliedCount: number, totalCount: number) {
+  const existing = previewPanels.get(logFileName);
+  if (existing) {
+    existing.reveal(vscode.ViewColumn.Beside, true);
+    existing.webview.html = buildPreviewHtml(resultLines, appliedCount, totalCount);
+    return;
+  }
+
+  const panel = vscode.window.createWebviewPanel(
+    'logFilterPro.preview',
+    `${logFileName} (Preview)`,
+    { viewColumn: vscode.ViewColumn.Beside, preserveFocus: true },
+    { enableScripts: false }
+  );
+  panel.webview.html = buildPreviewHtml(resultLines, appliedCount, totalCount);
+  panel.onDidDispose(() => previewPanels.delete(logFileName));
+  previewPanels.set(logFileName, panel);
 }
 
 export function activate(context: vscode.ExtensionContext) {
