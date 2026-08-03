@@ -1,3 +1,7 @@
+## v0.0.20
+
+- Feat: invalid `!` command / invalid regex lines now show only a 💡 lightbulb + fixed text「无效命令 / Invalid command」in place of the Filter button — no more inline error text; clicking the lightbulb still shows the full error
+
 ## v0.0.19
 
 - Fix: `.lf` file each rule line shows 2 `▶ Filter (Ctrl+Enter)` buttons — CodeLens provider now registers only once even if the extension activates multiple times
