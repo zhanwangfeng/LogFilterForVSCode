@@ -5,5 +5,6 @@
   "command.createLogFilterPro.title": "LogFilterPro: Create LogFilterPro File",
   "command.filterUpToLine.title": "LogFilterPro: Filter Up to This Line",
   "command.filterCurrentLine.title": "LogFilterPro: Filter Current Line",
-  "command.showLfError.title": "LogFilterPro: Show .lf Error"
+  "command.showLfError.title": "LogFilterPro: Show .lf Error",
+  "command.openCommandEditor.title": "LogFilterPro: Open Command Editor"
 }

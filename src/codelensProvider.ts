@@ -37,6 +37,22 @@ export class LfCodeLensProvider implements vscode.CodeLensProvider {
             arguments: [{ patternIndex, lfUri: document.uri }],
           })
         );
+
+        // 命令行额外显示 Editor 按钮
+        if (text.startsWith('!')) {
+          const cmdMatch = text.match(/^!\s*(\S+)/);
+          if (cmdMatch) {
+            const cmd = cmdMatch[1].toLowerCase();
+            console.log(`[LogFilterPro][CodeLens] line ${line}: editor lens command="${cmd}"`);
+            lenses.push(
+              new vscode.CodeLens(range, {
+                title: 'Editor',
+                command: 'logFilterPro.openCommandEditor',
+                arguments: [{ command: cmd, line, lfUri: document.uri }],
+              })
+            );
+          }
+        }
       }
       patternIndex++;
     }
