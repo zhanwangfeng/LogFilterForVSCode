@@ -2,6 +2,8 @@
 
 > **重要**：本工作流中所有 git 命令、打包命令、GitHub Release API 调用均由 AI 直接执行，无需人工操作。
 > 开发者只需确认执行意图（例如"开发 0.0.15，publisher 改成 zhanwangfeng"或"合并发布 0.0.15"）。
+>
+> **鉴权**：GitHub 访问令牌统一从项目根目录的固定文件 `.gittoken` 读取（内容为纯 token 字符串，不含换行符）。该文件已加入 `.gitignore`，**严禁提交到仓库**。若 `.gittoken` 不存在，AI 必须暂停并提示开发者创建，不得使用其他鉴权来源。
 
 ## 一、开发阶段
 
@@ -23,14 +25,20 @@
 ## 三、发布阶段
 
 12. 安装依赖与打包 vsix 文件（`npm install` → `npm run package`）（AI 执行；如遇到 vsce / Node 版本不兼容，AI 自动降级到兼容版本，例如 `@vscode/vsce@^2.0.0`）
-13. 创建 GitHub Release 并上传 vsix 附件：
+13. 创建 GitHub Release 并上传 vsix 附件（**仅使用 git 命令 + GitHub API，不使用 gh CLI**）：
     - release notes 取自 `CHANGELOG.md` 中该版本的变更说明（AI 自动提取）
-    - 通过 `gh release create v{ver} ./release/logfilterpro-{ver}.vsix --title "v{ver}" --notes-file <提取的 CHANGELOG 内容>` 或等效 GitHub API 创建 Release（关联 tag `v{ver}`）并上传 `release/*.vsix` 作为附件（AI 执行）
-    - 鉴权：优先使用系统中已登录的 `gh` CLI；若未登录则通过 `gh auth login` 或 git 凭证缓存 `echo "protocol=https\nhost=github.com\n" | git credential fill` 获取（AI 执行）
-14. （可选）如需发布到 VS Code Marketplace：`vsce publish --packagePath ./release/logfilterpro-{ver}.vsix`，publisher 需与 `package.json` 中一致（AI 执行，使用已配置的 PAT）
+    - 鉴权：从 `.gittoken` 文件读取 token（`GIT_TOKEN=$(cat .gittoken)`）；若文件不存在则暂停并提示开发者创建
+    - 用 GitHub API 创建 Release（关联 tag `v{ver}`，托管平台为 github.com）：
+      `curl -sS -X POST -H "Authorization: token $GIT_TOKEN" -H "Accept: application/vnd.github+json" https://api.github.com/repos/{owner}/{repo}/releases -d '{"tag_name":"v{ver}","name":"v{ver}","body":"<提取的 CHANGELOG 内容>"}'`
+      （`{owner}/{repo}` 由 `git remote get-url origin` 解析得到，例如 `zhanwangfeng/LogFilterForVSCode`）
+    - 上传 `release/*.vsix` 作为附件（从创建 Release 的响应中取得 `upload_url`）：
+      `curl -sS -X POST -H "Authorization: token $GIT_TOKEN" -H "Content-Type: application/zip" --data-binary @release/logfilterpro-{ver}.vsix "<upload_url>?name=logfilterpro-{ver}.vsix"`
+    - 不创建 tag 之外的额外引用；若 tag 已存在且需要覆盖，先询问开发者再执行
+14. （可选）如需发布到 VS Code Marketplace：`vsce publish --packagePath ./release/logfilterpro-{ver}.vsix`，publisher 需与 `package.json` 中一致（AI 执行，PAT 同样从 `.gittoken` 读取并以环境变量注入，例如 `VSCE_PAT=$(cat .gittoken)`）
 
 ## 四、AI 执行规范
 
 - 每个阶段开始前 AI 输出当前执行概要与步骤清单，遇到需要人工确认的决策（如是否覆盖现有 tag）才提问，否则全自动。合并策略已固定为 **Create a merge commit (--no-ff)**，不再询问。
 - 所有 git 命令、API 调用的输出记录在对应步骤的上下文中，失败时 AI 自动修复（例如依赖冲突执行 `npm install --force`，版本不兼容降级，网络失败重试）。
 - 版本号 `{ver}` 一律从用户指令提取；若指令未明确则 AI 询问。
+- Git 操作一律使用 git 命令；GitHub Release 创建与附件上传使用 GitHub API（curl）；**不使用 `gh` CLI**，鉴权一律从 `.gittoken` 文件读取。
