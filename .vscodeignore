@@ -4,6 +4,7 @@ src/**
 node_modules/**
 docs/**
 .gitignore
+.gittoken
 tsconfig.json
 **/*.ts
 **/*.map
