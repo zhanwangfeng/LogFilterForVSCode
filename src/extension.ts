@@ -211,7 +211,8 @@ export function activate(context: vscode.ExtensionContext) {
 
       let rules: Rule[];
       try {
-        rules = parseLfFile(lfContent);
+        // 只校验目标行及以上的命令；下方命令不会被执行，其错误不阻断过滤
+        rules = parseLfFile(lfContent, patternIndex);
       } catch (err) {
         vscode.window.showErrorMessage(`${err}`);
         return;
@@ -262,6 +263,13 @@ export function activate(context: vscode.ExtensionContext) {
 
       const lfUri = document.uri;
       await vscode.commands.executeCommand('logFilterPro.filterUpToLine', { patternIndex, lfUri });
+    })
+  );
+
+  context.subscriptions.push(
+    vscode.commands.registerCommand('logFilterPro.showLfError', (error: string) => {
+      console.log(`[LogFilterPro][showLfError] clicked, error="${error}"`);
+      vscode.window.showWarningMessage(error);
     })
   );
 

@@ -4,5 +4,6 @@
   "command.openPreview.title": "LogFilterPro：打开预览",
   "command.createLogFilterPro.title": "LogFilterPro：创建 LogFilterPro 文件",
   "command.filterUpToLine.title": "LogFilterPro：过滤到当前行",
-  "command.filterCurrentLine.title": "LogFilterPro：过滤当前行"
+  "command.filterCurrentLine.title": "LogFilterPro：过滤当前行",
+  "command.showLfError.title": "LogFilterPro：查看 .lf 错误"
 }

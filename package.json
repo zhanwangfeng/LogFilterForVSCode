@@ -6,7 +6,7 @@
     "type": "git",
     "url": "https://github.com/zhanwangfeng/LogFilterForVSCode.git"
   },
-  "version": "0.0.17",
+  "version": "0.0.18",
   "publisher": "zhanwangfeng",
   "license": "MIT",
   "icon": "icons/icon-128.png",
@@ -40,6 +40,10 @@
       {
         "command": "logFilterPro.filterCurrentLine",
         "title": "%command.filterCurrentLine.title%"
+      },
+      {
+        "command": "logFilterPro.showLfError",
+        "title": "%command.showLfError.title%"
       }
     ],
     "languages": [
