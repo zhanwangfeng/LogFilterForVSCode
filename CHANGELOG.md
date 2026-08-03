@@ -1,3 +1,11 @@
+## v0.0.18
+
+- Feat: invalid `!` commands / invalid regex lines now show a 💡 lightbulb + one-line error message inline in place of the Filter button; clicking the lightbulb still shows the full error
+- Feat: clicking `▶ Filter` / `Ctrl+Enter` now only validates commands at and above the target line — errors below (which never execute) no longer block filtering; `openPreview` still validates the whole file
+- Fix: `-` continuation line merging keeps line numbers aligned (placeholder lines), fixing error-to-line misalignment that made the lightbulb never appear
+- Chore: declare CodeLens command `logFilterPro.showLfError` in package.json so the editor renders the lightbulb CodeLens
+- Chore: add `[LogFilterPro]` debug logs and nls titles for the new command
+
 ## v0.0.17
 
 - Feat: preview panel now reuses one tab per log filename — re-running a filter on the same file refreshes the existing preview tab instead of opening a new one
