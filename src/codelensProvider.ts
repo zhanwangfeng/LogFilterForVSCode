@@ -23,7 +23,7 @@ export class LfCodeLensProvider implements vscode.CodeLensProvider {
         console.log(`[LogFilterPro][CodeLens] line ${line}: error lens -> "${error}"`);
         lenses.push(
           new vscode.CodeLens(range, {
-            title: `💡 ${error}`,
+            title: `💡 ${invalidCommandText()}`,
             command: 'logFilterPro.showLfError',
             arguments: [error],
           })
@@ -44,4 +44,8 @@ export class LfCodeLensProvider implements vscode.CodeLensProvider {
     console.log(`[LogFilterPro][CodeLens] total lenses created: ${lenses.length}`);
     return lenses;
   }
+}
+
+function invalidCommandText(): string {
+  return vscode.env.language.toLowerCase().startsWith('zh') ? '无效命令' : 'Invalid command';
 }
