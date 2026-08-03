@@ -1,3 +1,10 @@
+## v0.0.21
+
+- Feat: All command lines (`!dedupe`, `!dedupe-consecutive`, `!count`, `!count-consecutive`, `!sort`, `!pivot`) now show an `Editor` button next to `▶ Filter` — each opens its own dedicated webview editor
+- Feat: `!sort` Editor — visual form to configure desc/int/regex/drop-unmatched/skip-line parameters with live preview
+- Feat: `!pivot` Editor — visual form to configure pattern/rows/cols/values/func/sort/view/format/fill/filters with live preview
+- Feat: `!dedupe` / `!dedupe-consecutive` / `!count` / `!count-consecutive` Editors — informational panels with command description and Apply/Cancel
+
 ## v0.0.20
 
 - Feat: invalid `!` command / invalid regex lines now show only a 💡 lightbulb + fixed text「无效命令 / Invalid command」in place of the Filter button — no more inline error text; clicking the lightbulb still shows the full error

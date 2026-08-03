@@ -84,6 +84,7 @@ Rule 3: !dedupe                      → 1 line  (192.168.1.1)
 - **CreateLogFilterPro** — Create `.lf` from current `.log` (editor title button)
 - **OpenPreview** — Run all rules and show preview
 - **`▶ Filter (Ctrl+Enter)`** — Run from rule 1 to the current line
+- **`Editor`** — Open a visual editor for command lines (`!sort`, `!pivot`, etc.) — configure parameters via form with live preview
 - **`Ctrl+Enter`** (any line) — Run nearest valid rule above cursor
 - **`Ctrl+/`** — Toggle comment
 - **Syntax highlighting** — Comments (green), commands (purple), regex (default)
