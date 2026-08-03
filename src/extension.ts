@@ -6,6 +6,7 @@ import { LfCodeLensProvider } from './codelensProvider';
 import { LfCompletionProvider } from './completionProvider';
 
 const previewPanels = new Map<string, vscode.WebviewPanel>();
+let codeLensRegistered = false;
 
 function buildPreviewHtml(resultLines: string[], appliedCount: number, totalCount: number): string {
   const config = vscode.workspace.getConfiguration('editor');
@@ -273,9 +274,12 @@ export function activate(context: vscode.ExtensionContext) {
     })
   );
 
-  context.subscriptions.push(
-    vscode.languages.registerCodeLensProvider('lf', new LfCodeLensProvider())
-  );
+  if (!codeLensRegistered) {
+    context.subscriptions.push(
+      vscode.languages.registerCodeLensProvider('lf', new LfCodeLensProvider())
+    );
+    codeLensRegistered = true;
+  }
 
   context.subscriptions.push(
     vscode.languages.registerCompletionItemProvider('lf', new LfCompletionProvider(), '!', '-')
