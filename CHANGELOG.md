@@ -1,3 +1,7 @@
+## v0.0.19
+
+- Fix: `.lf` file each rule line shows 2 `▶ Filter (Ctrl+Enter)` buttons — CodeLens provider now registers only once even if the extension activates multiple times
+
 ## v0.0.18
 
 - Feat: invalid `!` commands / invalid regex lines now show a 💡 lightbulb + one-line error message inline in place of the Filter button; clicking the lightbulb still shows the full error
